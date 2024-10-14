@@ -5,20 +5,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class PracticeAnalysis {
+public class PracticeSentence {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer wps;
-    private Integer pitch;
+    private String sentence;
 
-    @OneToMany(mappedBy = "practice_analysis")
-    private List<PracticeSentence> sentences;
+    private Integer wpm;
+    private Integer energy;
+
+    @ManyToOne
+    private PracticeAnalysis practice_analysis;
 }
