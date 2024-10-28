@@ -26,7 +26,7 @@ public class Project {
     private String name;
 
     @NotNull
-    private LocalDateTime created_date;
+    private LocalDateTime created_date = LocalDateTime.now();
 
     @NotNull
     private Integer min_time;
@@ -44,10 +44,9 @@ public class Project {
     @OneToMany(mappedBy = "project")
     private List<Practice> practices;
 
-    public Project(Model model, User user, LocalDateTime created_date, String name, Long id) {
+    public Project(Model model, User user, String name, Long id) {
         this.model = model;
         this.user = user;
-        this.created_date = LocalDateTime.now();
         this.name = name;
     }
 }

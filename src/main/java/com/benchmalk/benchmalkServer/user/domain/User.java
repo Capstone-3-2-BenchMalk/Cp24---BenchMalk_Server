@@ -1,6 +1,7 @@
 package com.benchmalk.benchmalkServer.user.domain;
 
 import com.benchmalk.benchmalkServer.model.domain.Model;
+import com.benchmalk.benchmalkServer.project.domain.Project;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -27,14 +28,16 @@ public class User {
     private String password;
 
     @NotNull
-    private LocalDateTime created_date;
+    private LocalDateTime created_date = LocalDateTime.now();
 
     @OneToMany(mappedBy = "user")
     private List<Model> added_models;
 
-    public User(Long id, String username, String password, LocalDateTime created_date) {
+    @OneToMany(mappedBy = "user")
+    private List<Project> projects;
+
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.created_date = LocalDateTime.now();
     }
 }

@@ -27,7 +27,7 @@ public class Model {
     private ModelType model_type;
 
     @NotNull
-    private LocalDateTime created_date;
+    private LocalDateTime created_date = LocalDateTime.now();
 
     @ManyToOne
     private User user;
@@ -35,9 +35,8 @@ public class Model {
     @OneToOne
     private ModelAnalysis model_analysis;
 
-    public Model(Long id, String name, ModelType model_type, LocalDateTime created_date) {
+    public Model(Long id, String name, ModelType model_type) {
         this.name = name;
         this.model_type = model_type;
-        this.created_date = LocalDateTime.now();
     }
 }
