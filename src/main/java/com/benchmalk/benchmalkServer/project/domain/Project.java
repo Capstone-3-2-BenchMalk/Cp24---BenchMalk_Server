@@ -1,6 +1,7 @@
 package com.benchmalk.benchmalkServer.project.domain;
 
 import com.benchmalk.benchmalkServer.model.domain.Model;
+import com.benchmalk.benchmalkServer.practice.domain.Practice;
 import com.benchmalk.benchmalkServer.user.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,6 +28,11 @@ public class Project {
     @NotNull
     private LocalDateTime created_date;
 
+    @NotNull
+    private Integer min_time;
+    @NotNull
+    private Integer max_time;
+
     @ManyToOne
     @NotNull
     private User user;
@@ -33,6 +40,9 @@ public class Project {
     @ManyToOne
     @NotNull
     private Model model;
+
+    @OneToMany(mappedBy = "project")
+    private List<Practice> practices;
 
     public Project(Model model, User user, LocalDateTime created_date, String name, Long id) {
         this.model = model;
