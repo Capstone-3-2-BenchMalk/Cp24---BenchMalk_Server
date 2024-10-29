@@ -1,9 +1,8 @@
-package com.benchmalk.benchmalkServer;
+package com.benchmalk.benchmalkServer.security;
 
 import com.benchmalk.benchmalkServer.user.dto.UserLoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,26 +11,22 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
 public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    public LoginAuthenticationFilter(final String defaultFilterProcessesUrl,
-                                     final AuthenticationManager authenticationManager) {
-        super(defaultFilterProcessesUrl, authenticationManager);
+    private ObjectMapper objectMapper = new ObjectMapper();
 
-        setSecurityContextRepository(
-                new DelegatingSecurityContextRepository(
-                        new HttpSessionSecurityContextRepository(),
-                        new RequestAttributeSecurityContextRepository()
-                )
-        );
+    public LoginAuthenticationFilter() {
+        super(new AntPathRequestMatcher("/api/v1/login"));
     }
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
@@ -44,13 +39,18 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
         }
 
-        ServletInputStream inputStream = request.getInputStream();
+        UserLoginRequest userLoginRequest = objectMapper.readValue(request.getReader(), UserLoginRequest.class);
 
-         UserLoginRequest  userLoginRequest = new ObjectMapper().readValue(inputStream, UserLoginRequest.class);
+        if(!StringUtils.hasLength(userLoginRequest.getUsername())
+                || !StringUtils.hasLength(userLoginRequest.getPassword())) {
+            throw new IllegalArgumentException("username or password is empty");
+        }
 
-        return this.getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(
-                userLoginRequest.getUsername(),
-                userLoginRequest.getPassword()
-        ));
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userLoginRequest.getUsername(),
+                userLoginRequest.getPassword());
+
+        Authentication authenticate = getAuthenticationManager().authenticate(token);
+
+        return authenticate;
     }
 }

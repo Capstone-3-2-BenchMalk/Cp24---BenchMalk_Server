@@ -9,6 +9,7 @@ import com.benchmalk.benchmalkServer.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,21 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequestMapping("/api/v1/users")
 public class UserController {
+    @Autowired
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
-
-    @PostMapping()
-    public Object signup(@Valid @RequestBody UserSignupRequest userSignupRequest) {
-        try{
-            userService.create(userSignupRequest.getUsername(),userSignupRequest.getPassword());
-        }catch (DataIntegrityViolationException e){
-            e.printStackTrace();
-            return ResponseEntity.status(ErrorCode.USERNAME_CONFLICT.getStatus()).body(ErrorCode.USERNAME_CONFLICT.getMessage());
-        }catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus()).body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
-        }
-
-        return ResponseEntity.ok();
-    }
 }

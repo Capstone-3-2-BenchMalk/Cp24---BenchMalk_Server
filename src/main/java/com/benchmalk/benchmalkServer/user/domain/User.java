@@ -2,6 +2,7 @@ package com.benchmalk.benchmalkServer.user.domain;
 
 import com.benchmalk.benchmalkServer.model.domain.Model;
 import com.benchmalk.benchmalkServer.project.domain.Project;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -27,12 +28,15 @@ public class User {
     @NotNull
     private String password;
 
+    @JsonIgnore
     @NotNull
     private LocalDateTime created_date = LocalDateTime.now();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Model> added_models;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Project> projects;
 

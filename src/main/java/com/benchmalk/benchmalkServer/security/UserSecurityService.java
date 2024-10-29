@@ -1,4 +1,4 @@
-package com.benchmalk.benchmalkServer.user.service;
+package com.benchmalk.benchmalkServer.security;
 
 import com.benchmalk.benchmalkServer.user.domain.User;
 import com.benchmalk.benchmalkServer.user.repository.UserRepository;
@@ -29,6 +29,6 @@ public class UserSecurityService implements UserDetailsService {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("user"));
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),authorities);
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
 }
