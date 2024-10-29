@@ -22,5 +22,6 @@ class UserRepositoryTest {
         userRepository.save(user);
 
         assertThat(userRepository.findById(user.getId()).get()).isEqualTo(user);
+        assertThat(userRepository.findByUsername(user.getUsername()).get()).isEqualTo(user);
     }
 }
