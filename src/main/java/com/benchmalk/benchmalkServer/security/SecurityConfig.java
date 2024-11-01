@@ -1,5 +1,7 @@
 package com.benchmalk.benchmalkServer.security;
 
+import com.benchmalk.benchmalkServer.user.dto.UserLogoutResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -42,11 +46,20 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/v1/auth").permitAll()
-                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/api/v1/**").authenticated()
                         .anyRequest().permitAll())
                 .logout((logout) -> logout
-                        .logoutSuccessUrl("/api/v1/login")
-                        .invalidateHttpSession(true))
+                        .logoutUrl("/api/v1/logout")
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID","access_token")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            try {
+                                new ObjectMapper().writeValue(response.getWriter(), UserLogoutResponse.LOGOUT_SUCCESS);
+                            } catch (IOException e) {
+                                new ObjectMapper().writeValue(response.getWriter(), UserLogoutResponse.LOGOUT_FAILED);
+                            }
+                        }))
                 .addFilterBefore(loginAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
