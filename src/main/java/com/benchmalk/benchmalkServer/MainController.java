@@ -29,7 +29,7 @@ public class MainController {
     }
 
     @PostMapping("/api/v1/auth")
-    public Object signup(@Valid @RequestBody UserSignupRequest userSignupRequest) {
+    public ResponseEntity signup(@Valid @RequestBody UserSignupRequest userSignupRequest) {
         try{
             userService.create(userSignupRequest.getUsername(),userSignupRequest.getPassword());
         }catch (DataIntegrityViolationException e){
@@ -40,6 +40,7 @@ public class MainController {
             return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus()).body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
         }
 
-        return ResponseEntity.ok();
+
+        return ResponseEntity.ok().body("회원가입 성공");
     }
 }
