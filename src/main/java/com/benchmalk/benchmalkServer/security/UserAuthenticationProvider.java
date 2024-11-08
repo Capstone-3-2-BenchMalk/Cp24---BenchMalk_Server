@@ -1,6 +1,5 @@
 package com.benchmalk.benchmalkServer.security;
 
-import com.benchmalk.benchmalkServer.user.domain.User;
 import com.benchmalk.benchmalkServer.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -28,11 +27,11 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
 
         UserDetails userDetails = userSecurityService.loadUserByUsername(loginId);
 
-        if(!passwordEncoder.matches(password, userDetails.getPassword())) {
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Invalid Password");
         }
 
-        return new UsernamePasswordAuthenticationToken(userRepository.findByUsername(loginId).get(), null, new ArrayList<>());
+        return new UsernamePasswordAuthenticationToken(userRepository.findByUserid(loginId).get(), null, new ArrayList<>());
     }
 
     @Override

@@ -10,7 +10,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
@@ -24,16 +23,16 @@ public class UserAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        String errMsg = "Invalid username or password";
+        String errMsg = "Invalid id or password";
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
 
-        if(exception instanceof BadCredentialsException){
-            errMsg = "Invalid username or password";
-        } else if(exception instanceof DisabledException){
+        if (exception instanceof BadCredentialsException) {
+            errMsg = "Invalid id or password";
+        } else if (exception instanceof DisabledException) {
             errMsg = "Locked";
-        } else if(exception instanceof CredentialsExpiredException){
+        } else if (exception instanceof CredentialsExpiredException) {
             errMsg = "Expired";
         }
         objectMapper.writeValue(response.getWriter(), errMsg);

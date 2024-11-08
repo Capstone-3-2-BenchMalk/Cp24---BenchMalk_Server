@@ -33,9 +33,13 @@ public class MainController {
         try{
             userService.create(userSignupRequest.getUsername(),userSignupRequest.getPassword());
         }catch (DataIntegrityViolationException e){
+    public Object signup(@Valid @RequestBody UserSignupRequest userSignupRequest) {
+        try {
+            userService.create(userSignupRequest.getId(), userSignupRequest.getUsername(), userSignupRequest.getPassword());
+        } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             return ResponseEntity.status(ErrorCode.USERNAME_CONFLICT.getStatus()).body(ErrorCode.USERNAME_CONFLICT.getMessage());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus()).body(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
         }
