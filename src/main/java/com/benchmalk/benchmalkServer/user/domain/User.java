@@ -3,7 +3,12 @@ package com.benchmalk.benchmalkServer.user.domain;
 import com.benchmalk.benchmalkServer.model.domain.Model;
 import com.benchmalk.benchmalkServer.project.domain.Project;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +25,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
+    @Column(unique = true)
+    private String userid;
 
     @NotNull
     @Column(unique = true)
@@ -40,7 +49,8 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Project> projects;
 
-    public User(String username, String password) {
+    public User(String userid, String username, String password) {
+        this.userid = userid;
         this.username = username;
         this.password = password;
     }

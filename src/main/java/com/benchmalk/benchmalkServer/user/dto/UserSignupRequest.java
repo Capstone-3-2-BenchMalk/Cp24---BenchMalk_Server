@@ -8,6 +8,8 @@ import lombok.ToString;
 @ToString
 public class UserSignupRequest {
     @NotNull
+    private String id;
+    @NotNull
     private String username;
     @NotNull
     private String password;

@@ -5,15 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.context.DelegatingSecurityContextRepository;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StringUtils;
 
@@ -41,12 +37,12 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
 
         UserLoginRequest userLoginRequest = objectMapper.readValue(request.getReader(), UserLoginRequest.class);
 
-        if(!StringUtils.hasLength(userLoginRequest.getUsername())
+        if (!StringUtils.hasLength(userLoginRequest.getId())
                 || !StringUtils.hasLength(userLoginRequest.getPassword())) {
-            throw new IllegalArgumentException("username or password is empty");
+            throw new IllegalArgumentException("id or password is empty");
         }
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userLoginRequest.getUsername(),
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userLoginRequest.getId(),
                 userLoginRequest.getPassword());
 
         Authentication authenticate = getAuthenticationManager().authenticate(token);
