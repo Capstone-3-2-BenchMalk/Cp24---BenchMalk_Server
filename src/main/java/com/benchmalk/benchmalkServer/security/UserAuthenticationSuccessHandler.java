@@ -1,6 +1,7 @@
 package com.benchmalk.benchmalkServer.security;
 
 import com.benchmalk.benchmalkServer.user.domain.User;
+import com.benchmalk.benchmalkServer.user.dto.UserResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +27,6 @@ public class UserAuthenticationSuccessHandler implements AuthenticationSuccessHa
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        objectMapper.writeValue(response.getWriter(), user);
+        objectMapper.writeValue(response.getWriter(), new UserResponse(user));
     }
 }
