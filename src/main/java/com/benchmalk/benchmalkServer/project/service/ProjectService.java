@@ -36,7 +36,10 @@ public class ProjectService {
                 () -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
     }
 
-    public List<Project> getProjectsByUserId(String userid) {
+    public List<Project> getProjects(String userid) {
+        if (userid.isBlank()) {
+            return projectRepository.findAll();
+        }
         return projectRepository.findByUser(userService.getUserByUserId(userid));
     }
 }
