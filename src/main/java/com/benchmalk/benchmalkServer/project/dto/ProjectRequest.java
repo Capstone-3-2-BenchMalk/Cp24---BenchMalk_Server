@@ -1,18 +1,18 @@
 package com.benchmalk.benchmalkServer.project.dto;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class ProjectRequest {
-    @NotNull
+    @NotBlank
     private String userid;
-    @NotNull
+    @NotBlank
     private String name;
-    @NotNull
+    @NotBlank
     private Integer min_time;
-    @NotNull
+    @NotBlank
     private Integer max_time;
 }
