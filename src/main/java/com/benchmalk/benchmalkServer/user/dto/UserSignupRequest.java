@@ -8,7 +8,7 @@ import lombok.ToString;
 @ToString
 public class UserSignupRequest {
     @NotNull
-    private String id;
+    private String userid;
     @NotNull
     private String username;
     @NotNull

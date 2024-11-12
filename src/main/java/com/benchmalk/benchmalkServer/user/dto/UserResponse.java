@@ -9,12 +9,12 @@ import lombok.Setter;
 public class UserResponse {
 
     private Long id;
-    private String Userid;
-    private String Username;
+    private String userid;
+    private String username;
 
     public UserResponse(User user) {
         this.id = user.getId();
-        this.Userid = user.getUserid();
-        this.Username = user.getUsername();
+        this.userid = user.getUserid();
+        this.username = user.getUsername();
     }
 }

@@ -16,13 +16,11 @@ public class UserService {
 
     public User create(String userid, String username, String password) {
         User user = new User(userid, username, passwordEncoder.encode(password));
-        this.userRepository.save(user);
-        return user;
+        return this.userRepository.save(user);
     }
 
     public User getUserByUserId(String userid) {
-        User user = userRepository.findByUserid(userid)
+        return userRepository.findByUserid(userid)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return user;
     }
 }

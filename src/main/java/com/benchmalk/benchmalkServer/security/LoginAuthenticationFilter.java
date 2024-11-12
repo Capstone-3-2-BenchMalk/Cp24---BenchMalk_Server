@@ -37,12 +37,12 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
 
         UserLoginRequest userLoginRequest = objectMapper.readValue(request.getReader(), UserLoginRequest.class);
 
-        if (!StringUtils.hasLength(userLoginRequest.getId())
+        if (!StringUtils.hasLength(userLoginRequest.getUserid())
                 || !StringUtils.hasLength(userLoginRequest.getPassword())) {
             throw new IllegalArgumentException("id or password is empty");
         }
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userLoginRequest.getId(),
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userLoginRequest.getUserid(),
                 userLoginRequest.getPassword());
 
         Authentication authenticate = getAuthenticationManager().authenticate(token);
