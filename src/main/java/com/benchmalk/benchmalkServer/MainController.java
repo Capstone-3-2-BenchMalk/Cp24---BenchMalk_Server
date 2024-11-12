@@ -39,9 +39,6 @@ public class MainController {
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             throw new CustomException(ErrorCode.USERNAME_CONFLICT);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

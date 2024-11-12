@@ -11,10 +11,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,13 +34,26 @@ public class ProjectController {
         if (bindingResult.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
-        try {
-            Project project = projectService.create(projectRequest.getUserid(), projectRequest.getName(),
-                    projectRequest.getMin_time(), projectRequest.getMax_time());
-            return ResponseEntity.ok(new ProjectResponse(project));
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        Project project = projectService.create(projectRequest.getUserid(), projectRequest.getName(),
+                projectRequest.getMin_time(), projectRequest.getMax_time());
+        return ResponseEntity.ok(new ProjectResponse(project));
+    }
+
+    @DeleteMapping("/{projectid}")
+    public ResponseEntity<String> deleteProject(@PathVariable Long projectid) {
+        return ResponseEntity.ok("Project Id = " + projectService.delete(projectid).toString() + " deletion success");
+    }
+
+    @GetMapping("/{projectid}")
+    public ResponseEntity<ProjectResponse> getProject(@PathVariable Long projectid) {
+        return ResponseEntity.ok(new ProjectResponse(projectService.getProject(projectid)));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProjectResponse>> getProjectsByUserId(@RequestParam String userid) {
+        return ResponseEntity.ok(
+                projectService.getProjectsByUserId(userid).stream().map(p -> new ProjectResponse(p)).toList()
+        );
     }
 
 }

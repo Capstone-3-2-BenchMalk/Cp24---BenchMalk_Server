@@ -1,6 +1,7 @@
 package com.benchmalk.benchmalkServer.project.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,8 +12,8 @@ public class ProjectRequest {
     private String userid;
     @NotBlank
     private String name;
-    @NotBlank
+    @NotNull
     private Integer min_time;
-    @NotBlank
+    @NotNull
     private Integer max_time;
 }
