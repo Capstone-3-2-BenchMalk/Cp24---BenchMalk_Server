@@ -15,12 +15,16 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,12 +34,18 @@ public class PracticeController {
     private final PracticeService practiceService;
 
     @PostMapping
-    public ResponseEntity<PracticeResponse> createPractice(@Valid @RequestBody PracticeRequest practiceRequest, BindingResult bindingResult) {
+    public ResponseEntity<PracticeResponse> createPractice(@Valid @RequestPart(value = "json") PracticeRequest practiceRequest, BindingResult bindingResult, @RequestPart MultipartFile file) throws IOException {
         if (bindingResult.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
         Practice practice = practiceService.create(practiceRequest.getName(),
                 practiceRequest.getMemo(), practiceRequest.getProjectid());
+
+        String uploadPath = "C:/Users/dksvl/Desktop/";
+        String originalFileName = file.getOriginalFilename();
+        String savedFileName = UUID.randomUUID().toString() + "_" + originalFileName;
+        File file1 = new File(uploadPath + savedFileName);
+        file.transferTo(file1);
         return ResponseEntity.ok(new PracticeResponse(practice));
     }
 
