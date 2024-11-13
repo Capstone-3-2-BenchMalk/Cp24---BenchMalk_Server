@@ -25,7 +25,7 @@ public class Practice {
     private LocalDateTime created_date = LocalDateTime.now();
 
     @NotNull
-    private PracticeStatus status;
+    private PracticeStatus status = PracticeStatus.CREATED;
 
     private String memo;
 
@@ -36,9 +36,9 @@ public class Practice {
     @OneToOne
     private PracticeAnalysis practice_analysis;
 
-    public Practice(Long id, String name, PracticeStatus status, Project project) {
+    public Practice(String name, String memo,Project project) {
         this.name = name;
-        this.status = status;
         this.project = project;
+        this.memo = memo;
     }
 }

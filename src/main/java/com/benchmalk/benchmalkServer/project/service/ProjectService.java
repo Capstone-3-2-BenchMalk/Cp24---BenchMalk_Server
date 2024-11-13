@@ -37,7 +37,7 @@ public class ProjectService {
     }
 
     public List<Project> getProjects(String userid) {
-        if (userid.isBlank()) {
+        if (userid == null) {
             return projectRepository.findAll();
         }
         return projectRepository.findByUser(userService.getUserByUserId(userid));

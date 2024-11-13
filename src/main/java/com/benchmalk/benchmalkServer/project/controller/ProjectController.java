@@ -50,7 +50,7 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProjectResponse>> getProjectsByUserId(@RequestParam String userid) {
+    public ResponseEntity<List<ProjectResponse>> getProjects(@RequestParam(required = false) String userid) {
         return ResponseEntity.ok(
                 projectService.getProjects(userid).stream().map(p -> new ProjectResponse(p)).toList()
         );
