@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class PracticeRequest {
     @NotNull
-    private Long projectid;
+    private String projectid;
     @NotBlank
     private String name;
 
