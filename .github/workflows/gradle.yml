@@ -37,7 +37,7 @@ jobs:
       run: chmod +x ./gradlew
 
     - name: Build with Gradle Wrapper
-      run: ./gradlew build
+      run: ./gradlew build ./gradlew build -D DB_NAME=$DB_NAME -D DB_USER=$DB_USER -D DB_PASSWORD=$DB_PASSWORD -D HOST=$HOST
       env: 
         HOST: ${{ secrets.HOST }}
         DB_NAME: ${{ secrets.DB_NAME }}
