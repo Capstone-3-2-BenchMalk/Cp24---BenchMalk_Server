@@ -3,6 +3,7 @@ package com.benchmalk.benchmalkServer.practice.controller;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.practice.domain.Practice;
+import com.benchmalk.benchmalkServer.practice.dto.PracticeModifyRequest;
 import com.benchmalk.benchmalkServer.practice.dto.PracticeRequest;
 import com.benchmalk.benchmalkServer.practice.dto.PracticeResponse;
 import com.benchmalk.benchmalkServer.practice.service.PracticeService;
@@ -13,11 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -35,11 +37,8 @@ public class PracticeController {
     private final PracticeService practiceService;
 
     @PostMapping
-    public ResponseEntity<PracticeResponse> createPractice(@Valid @RequestPart(value = "json") PracticeRequest practiceRequest, BindingResult bindingResult, @RequestPart MultipartFile file
+    public ResponseEntity<PracticeResponse> createPractice(@Valid @RequestPart(value = "json") PracticeRequest practiceRequest, @RequestPart MultipartFile file
             , @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        if (bindingResult.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
         String fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
         if (fileExtension == null || !List.of("mp3", "mp4").contains(fileExtension)) {
             throw new CustomException(ErrorCode.BAD_FILE_EXTENSION);
@@ -70,5 +69,10 @@ public class PracticeController {
             , @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(practiceService.getPractices(userDetails.getUsername(), projectid).stream()
                 .map(p -> new PracticeResponse(p)).toList());
+    }
+
+    @PatchMapping
+    public ResponseEntity<PracticeResponse> modifyPractice(@Valid @RequestBody PracticeModifyRequest request, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(new PracticeResponse(practiceService.modify(userDetails.getUsername(), request.getPracticeid(), request.getName(), request.getMemo())));
     }
 }

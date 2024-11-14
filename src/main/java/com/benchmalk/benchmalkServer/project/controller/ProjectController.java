@@ -1,8 +1,7 @@
 package com.benchmalk.benchmalkServer.project.controller;
 
-import com.benchmalk.benchmalkServer.common.exception.CustomException;
-import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.project.domain.Project;
+import com.benchmalk.benchmalkServer.project.dto.ProjectModifyRequest;
 import com.benchmalk.benchmalkServer.project.dto.ProjectRequest;
 import com.benchmalk.benchmalkServer.project.dto.ProjectResponse;
 import com.benchmalk.benchmalkServer.project.service.ProjectService;
@@ -12,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,10 +30,7 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @PostMapping
-    public ResponseEntity<ProjectResponse> createProject(@Valid @RequestBody ProjectRequest projectRequest, BindingResult bindingResult, @AuthenticationPrincipal UserDetails userDetails) {
-        if (bindingResult.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
+    public ResponseEntity<ProjectResponse> createProject(@Valid @RequestBody ProjectRequest projectRequest, @AuthenticationPrincipal UserDetails userDetails) {
         Project project = projectService.create(userDetails.getUsername(), projectRequest.getName(),
                 projectRequest.getMin_time(), projectRequest.getMax_time());
         return ResponseEntity.ok(new ProjectResponse(project));
@@ -56,5 +52,12 @@ public class ProjectController {
                 projectService.getProjects(userDetails.getUsername()).stream().map(p -> new ProjectResponse(p)).toList()
         );
     }
+
+    @PatchMapping
+    public ResponseEntity<ProjectResponse> modifyProject(@Valid @RequestBody ProjectModifyRequest request, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(new ProjectResponse(projectService.modify(userDetails.getUsername(), request.getProjectid()
+                , request.getName(), request.getMin_time(), request.getMax_time(), request.getModeilid())));
+    }
+
 
 }

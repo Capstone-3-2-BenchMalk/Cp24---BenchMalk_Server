@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,10 +28,7 @@ public class MainController {
     }
 
     @PostMapping("/api/v1/auth")
-    public ResponseEntity<UserResponse> signup(@Valid @RequestBody UserSignupRequest userSignupRequest, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
+    public ResponseEntity<UserResponse> signup(@Valid @RequestBody UserSignupRequest userSignupRequest) {
         try {
             User user = userService.create(userSignupRequest.getUserid(), userSignupRequest.getUsername(), userSignupRequest.getPassword());
             return ResponseEntity.ok(new UserResponse(user));

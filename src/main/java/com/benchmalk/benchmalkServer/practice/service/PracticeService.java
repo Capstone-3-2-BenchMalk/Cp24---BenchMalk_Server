@@ -51,4 +51,18 @@ public class PracticeService {
         }
         return projectService.getProjects(userid).stream().map(Project::getPractices).flatMap(List::stream).toList();
     }
+
+    public Practice modify(String userid, Long practiceid, String name, String memo) {
+        Practice practice = getPractice(practiceid);
+        if (!practice.getProject().getUser().getUserid().equals(userid)) {
+            throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
+        }
+        if (!name.isBlank()) {
+            practice.setName(name);
+        }
+        if (!memo.isBlank()) {
+            practice.setMemo(memo);
+        }
+        return practiceRepository.save(practice);
+    }
 }

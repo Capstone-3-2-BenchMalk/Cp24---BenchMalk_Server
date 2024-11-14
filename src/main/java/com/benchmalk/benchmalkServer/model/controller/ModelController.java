@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,11 +33,8 @@ public class ModelController {
     private final ModelService modelService;
 
     @PostMapping
-    public ResponseEntity<ModelResponse> createModel(@Valid @RequestPart(value = "json") ModelRequest modelRequest, BindingResult bindingResult, @RequestPart MultipartFile file
+    public ResponseEntity<ModelResponse> createModel(@Valid @RequestPart(value = "json") ModelRequest modelRequest, @RequestPart MultipartFile file
             , @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        if (bindingResult.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
         String fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
         if (fileExtension == null || !List.of("mp3", "mp4").contains(fileExtension)) {
             throw new CustomException(ErrorCode.BAD_FILE_EXTENSION);

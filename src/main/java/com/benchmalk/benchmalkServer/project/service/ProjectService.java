@@ -2,6 +2,7 @@ package com.benchmalk.benchmalkServer.project.service;
 
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
+import com.benchmalk.benchmalkServer.model.service.ModelService;
 import com.benchmalk.benchmalkServer.project.domain.Project;
 import com.benchmalk.benchmalkServer.project.repository.ProjectRepository;
 import com.benchmalk.benchmalkServer.user.domain.User;
@@ -14,6 +15,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
+    private final ModelService modelService;
     private final ProjectRepository projectRepository;
     private final UserService userService;
 
@@ -41,5 +43,25 @@ public class ProjectService {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
         return projectRepository.findByUser(userService.getUserByUserId(userid));
+    }
+
+    public Project modify(String userid, Long projectid, String name, Integer min_time, Integer max_time, Long modelid) {
+        Project project = getProject(projectid);
+        if (!project.getUser().getUserid().equals(userid)) {
+            throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
+        }
+        if (!name.isBlank()) {
+            project.setName(name);
+        }
+        if (min_time != null) {
+            project.setMinTime(min_time);
+        }
+        if (max_time != null) {
+            project.setMaxTime(max_time);
+        }
+        if (modelid != null) {
+            project.setModel(modelService.getModel(modelid));
+        }
+        return projectRepository.save(project);
     }
 }
