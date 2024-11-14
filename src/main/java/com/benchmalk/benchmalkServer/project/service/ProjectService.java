@@ -38,7 +38,7 @@ public class ProjectService {
 
     public List<Project> getProjects(String userid) {
         if (userid == null) {
-            return projectRepository.findAll();
+            throw new CustomException(ErrorCode.BAD_REQUEST);
         }
         return projectRepository.findByUser(userService.getUserByUserId(userid));
     }

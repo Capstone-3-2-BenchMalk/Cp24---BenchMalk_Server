@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -52,9 +51,9 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProjectResponse>> getProjects(@RequestParam(required = false) String userid) {
+    public ResponseEntity<List<ProjectResponse>> getProjects(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(
-                projectService.getProjects(userid).stream().map(p -> new ProjectResponse(p)).toList()
+                projectService.getProjects(userDetails.getUsername()).stream().map(p -> new ProjectResponse(p)).toList()
         );
     }
 
