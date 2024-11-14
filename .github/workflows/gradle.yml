@@ -35,14 +35,14 @@ jobs:
 
     - name: Make gradlew executable
       run: chmod +x ./gradlew
+
+    - name: Build with Gradle Wrapper
+      run: ./gradlew build
       env: 
         HOST: ${{ secrets.HOST }}
         DB_NAME: ${{ secrets.DB_NAME }}
         DB_USER: ${{ secrets.DB_USER }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
-    - name: Build with Gradle Wrapper
-      run: ./gradlew build
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
