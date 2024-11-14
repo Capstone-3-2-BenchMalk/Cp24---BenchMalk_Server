@@ -37,12 +37,7 @@ jobs:
       run: chmod +x ./gradlew
 
     - name: Build with Gradle Wrapper
-      run: ./gradlew build -D${DB_NAME}=${{ secrets.DB_NAME}} -D${DB_USER}=${{ secrets.DB_USER }} -D${DB_PASSWORD}=${{ secrets.DB_PASSWORD }} -D${HOST}=${{ secrets.HOST }}
-      env: 
-        HOST: ${{ secrets.HOST }}
-        DB_NAME: ${{ secrets.DB_NAME }}
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      run: ./gradlew build
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -72,6 +67,11 @@ jobs:
         run: |
           ssh -v ${{ secrets.USERNAME }}@${{ secrets.HOST }} "sudo fuser -k 8080/tcp || true"
           ssh -v ${{ secrets.USERNAME }}@${{ secrets.HOST }} "sudo nohup java -jar -Dspring.profiles.active=prod ~/cicd/*.jar  > ~/cicd/nohup.log 2>&1 &"
+        env: 
+          HOST: ${{ secrets.HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
