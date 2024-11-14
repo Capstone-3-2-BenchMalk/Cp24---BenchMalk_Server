@@ -1,7 +1,14 @@
 package com.benchmalk.benchmalkServer.user.domain;
 
 import com.benchmalk.benchmalkServer.model.domain.Model;
-import jakarta.persistence.*;
+import com.benchmalk.benchmalkServer.project.domain.Project;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,20 +28,30 @@ public class User {
 
     @NotNull
     @Column(unique = true)
+    private String userid;
+
+    @NotNull
+    @Column(unique = true)
     private String username;
 
     @NotNull
     private String password;
 
+    @JsonIgnore
     @NotNull
-    private LocalDateTime created_date;
+    private LocalDateTime createdDate = LocalDateTime.now();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<Model> added_models;
+    private List<Model> addedModels;
 
-    public User(Long id, String username, String password, LocalDateTime created_date) {
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Project> projects;
+
+    public User(String userid, String username, String password) {
+        this.userid = userid;
         this.username = username;
         this.password = password;
-        this.created_date = LocalDateTime.now();
     }
 }
