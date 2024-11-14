@@ -35,6 +35,11 @@ jobs:
 
     - name: Make gradlew executable
       run: chmod +x ./gradlew
+      env: 
+        HOST: ${{ secrets.HOST }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
@@ -66,7 +71,7 @@ jobs:
       - name: Execute remote commands
         run: |
           ssh -v ${{ secrets.USERNAME }}@${{ secrets.HOST }} "sudo fuser -k 8080/tcp || true"
-          ssh -v ${{ secrets.USERNAME }}@${{ secrets.HOST }} "sudo nohup java -jar ~/cicd/*.jar  > ~/cicd/nohup.log 2>&1 &"
+          ssh -v ${{ secrets.USERNAME }}@${{ secrets.HOST }} "sudo nohup java -jar -Dspring.profiles.active=prod ~/cicd/*.jar  > ~/cicd/nohup.log 2>&1 &"
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
