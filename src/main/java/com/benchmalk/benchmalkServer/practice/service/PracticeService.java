@@ -39,12 +39,16 @@ public class PracticeService {
     }
 
     public List<Practice> getPractices(String userid, Long projectid) {
-        if (projectid != null) {
-            return practiceRepository.findAllByProjectId(projectid);
-        }
         if (userid == null) {
-            return projectService.getProjects(userid).stream().map(Project::getPractices).flatMap(List::stream).toList();
+            throw new CustomException(ErrorCode.BAD_REQUEST);
         }
-        return practiceRepository.findAll();
+        if (projectid != null) {
+            Project project = projectService.getProject(projectid);
+            if (!project.getUser().getUserid().equals(userid)) {
+                throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
+            }
+            return practiceRepository.findAllByProject(project);
+        }
+        return projectService.getProjects(userid).stream().map(Project::getPractices).flatMap(List::stream).toList();
     }
 }

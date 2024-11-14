@@ -66,8 +66,9 @@ public class PracticeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PracticeResponse>> getPractices(@RequestParam(required = false) String userid, @RequestParam(required = false) Long projectid) {
-        return ResponseEntity.ok(practiceService.getPractices(userid, projectid).stream()
+    public ResponseEntity<List<PracticeResponse>> getPractices(@RequestParam(required = false) Long projectid
+            , @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(practiceService.getPractices(userDetails.getUsername(), projectid).stream()
                 .map(p -> new PracticeResponse(p)).toList());
     }
 }
