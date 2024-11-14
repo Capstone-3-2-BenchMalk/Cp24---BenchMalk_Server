@@ -66,7 +66,7 @@ jobs:
       - name: Execute remote commands
         run: ssh -v ${{ secrets.USERNAME }}@${{ secrets.HOST }} "sudo fuser -k 8080/tcp || true"
       - name: Execute Server
-        run: ssh -v ${{ secrets.USERNAME }}@${{ secrets.HOST }} "sudo nohup java -jar -Dspring.profiles.active=prod ~/cicd/*.jar  > ~/cicd/nohup.log 2>&1 &"
+        run: ssh -v ${{ secrets.USERNAME }}@${{ secrets.HOST }} "sudo nohup java -jar -Dspring.profiles.active=prod -DDB_NAME=${{ secrets.DB_NAME }}  -DDB_USER=${{ secrets.DB_USER }} -DDB_PASSWORD=${{ secrets.DB_PASSWORD }} ~/cicd/*.jar  > ~/cicd/nohup.log 2>&1 &"
         env: 
           HOST: ${{ secrets.HOST }}
           DB_NAME: ${{ secrets.DB_NAME }}
