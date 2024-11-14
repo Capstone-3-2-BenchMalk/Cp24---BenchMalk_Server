@@ -7,8 +7,8 @@ import lombok.Setter;
 
 import java.lang.reflect.Array;
 
-@Getter
 @Setter
+@Getter
 @Builder
 public class APIparams {
     private String language;

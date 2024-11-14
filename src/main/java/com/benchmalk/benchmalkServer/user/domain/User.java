@@ -39,11 +39,11 @@ public class User {
 
     @JsonIgnore
     @NotNull
-    private LocalDateTime created_date = LocalDateTime.now();
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<Model> added_models;
+    private List<Model> addedModels;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")

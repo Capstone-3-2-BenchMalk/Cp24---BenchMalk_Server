@@ -1,6 +1,7 @@
 package com.benchmalk.benchmalkServer.clova;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
@@ -18,13 +19,14 @@ import reactor.core.publisher.Mono;
 import java.io.File;
 import java.util.HashMap;
 
+@Hidden
 @RestController
 @Slf4j
 @RequestMapping("/clova/test")
 @Getter
 public class APITEST {
-    private final String INVOKE_URL = "https://clovaspeech-gw.ncloud.com/external/v1/9454/4e758d4760a6cffc347cdb45f0966d20f481bad806731c4c0e44f21cf9d90bb5";
-    private final String secret = "d4be9f1733bb43d7811f4fa94fc34f74";
+    private final String INVOKE_URL = "https://clovaspeech-gw.ncloud.com/external/v1/9563/3dc2c1a26515455b6c9143973c8d3c33829949684f0edd6cc49e5b233f51bf8c";
+    private final String secret = "5f12eb037a7d4c699c1b850cb06d3483";
     private WebClient webClient;
 
     public APITEST() {
@@ -40,12 +42,12 @@ public class APITEST {
 
     @GetMapping("/request")
     public void request() {
-        MultipartBodyBuilder builder = new MultipartBodyBuilder();
-        File file = new File("src/files/test.mp4");
-        builder.part("media", new FileSystemResource(file));
-        builder.part("params", APIparams.builder().language("enko").completion("sync").build());
         try {
-            String monoResponse = webClient.post()
+            MultipartBodyBuilder builder = new MultipartBodyBuilder();
+            File file = new File("src/files/test.mp4");
+            builder.part("media", new FileSystemResource(file));
+            builder.part("params", APIparams.builder().language("enko").completion("sync").build());
+            String monoResponse = webClient.mutate().build().post()
                     .uri("/recognizer/upload")
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .accept(MediaType.APPLICATION_JSON)
@@ -56,7 +58,7 @@ public class APITEST {
             System.out.println(monoResponse);
         } catch (WebClientResponseException e) {
             System.out.println(e.getResponseBodyAsString());
-            System.out.println(e);
+            System.out.println(e.getStatusCode() + e.getStatusText());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,8 +106,8 @@ public class APITEST {
         } catch (IllegalStateException e) {
             System.out.println(e.getMessage());
         } catch (Exception e) {
-        e.printStackTrace();
-    }
+            e.printStackTrace();
+        }
         return "post";
     }
 

@@ -1,16 +1,16 @@
 package com.benchmalk.benchmalkServer.user.dto;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter
 @ToString
 public class UserSignupRequest {
-    @NotNull
-    private String id;
-    @NotNull
+    @NotBlank
+    private String userid;
+    @NotBlank
     private String username;
-    @NotNull
+    @NotBlank
     private String password;
 }

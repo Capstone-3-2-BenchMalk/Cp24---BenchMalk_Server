@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StringUtils;
@@ -37,15 +38,16 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
 
         UserLoginRequest userLoginRequest = objectMapper.readValue(request.getReader(), UserLoginRequest.class);
 
-        if (!StringUtils.hasLength(userLoginRequest.getId())
+        if (!StringUtils.hasLength(userLoginRequest.getUserid())
                 || !StringUtils.hasLength(userLoginRequest.getPassword())) {
             throw new IllegalArgumentException("id or password is empty");
         }
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userLoginRequest.getId(),
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userLoginRequest.getUserid(),
                 userLoginRequest.getPassword());
 
         Authentication authenticate = getAuthenticationManager().authenticate(token);
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
 
         return authenticate;
     }

@@ -11,11 +11,9 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -52,11 +50,13 @@ public class SecurityConfig {
                         .logoutUrl("/api/v1/logout")
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID","access_token")
+                        .deleteCookies("JSESSIONID", "access_token")
                         .logoutSuccessHandler((request, response, authentication) -> {
                             try {
+                                response.getWriter().write(authentication.getName().toString() + " ");
                                 new ObjectMapper().writeValue(response.getWriter(), UserLogoutResponse.LOGOUT_SUCCESS);
                             } catch (IOException e) {
+                                response.getWriter().write(authentication.getName().toString() + " ");
                                 new ObjectMapper().writeValue(response.getWriter(), UserLogoutResponse.LOGOUT_FAILED);
                             }
                         }))
@@ -65,7 +65,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder(){
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

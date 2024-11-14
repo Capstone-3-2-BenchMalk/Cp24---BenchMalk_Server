@@ -31,7 +31,7 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Invalid Password");
         }
 
-        return new UsernamePasswordAuthenticationToken(userRepository.findByUserid(loginId).get(), null, new ArrayList<>());
+        return new UsernamePasswordAuthenticationToken(userSecurityService.loadUserByUsername(loginId), null, new ArrayList<>());
     }
 
     @Override

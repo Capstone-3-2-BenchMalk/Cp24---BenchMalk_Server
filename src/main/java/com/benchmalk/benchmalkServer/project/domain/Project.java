@@ -3,7 +3,12 @@ package com.benchmalk.benchmalkServer.project.domain;
 import com.benchmalk.benchmalkServer.model.domain.Model;
 import com.benchmalk.benchmalkServer.practice.domain.Practice;
 import com.benchmalk.benchmalkServer.user.domain.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,31 +27,31 @@ public class Project {
     private Long id;
 
     @NotNull
-    @Column(unique = true)
     private String name;
 
     @NotNull
     private LocalDateTime created_date = LocalDateTime.now();
 
     @NotNull
-    private Integer min_time;
+    private Integer minTime;
+
     @NotNull
-    private Integer max_time;
+    private Integer maxTime;
 
     @ManyToOne
     @NotNull
     private User user;
 
     @ManyToOne
-    @NotNull
     private Model model;
 
     @OneToMany(mappedBy = "project")
     private List<Practice> practices;
 
-    public Project(Model model, User user, String name, Long id) {
-        this.model = model;
-        this.user = user;
+    public Project(String name, Integer minTime, Integer maxTime, User user) {
         this.name = name;
+        this.minTime = minTime;
+        this.maxTime = maxTime;
+        this.user = user;
     }
 }
