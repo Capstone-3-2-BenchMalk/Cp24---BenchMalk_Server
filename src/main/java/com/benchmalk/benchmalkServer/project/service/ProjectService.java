@@ -19,7 +19,7 @@ public class ProjectService {
 
     public Project create(String userid, String name, Integer min_time, Integer max_time) {
         User user = userService.getUserByUserId(userid);
-        if (!projectRepository.findByNameAndUser(name, user).isEmpty()) {
+        if (projectRepository.existsByNameAndUser(name, user)) {
             throw new CustomException(ErrorCode.PROJECT_CONFLICT);
         }
         Project project = new Project(name, min_time, max_time, user);

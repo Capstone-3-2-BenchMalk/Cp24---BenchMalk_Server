@@ -33,9 +33,10 @@ public class Project {
     private LocalDateTime created_date = LocalDateTime.now();
 
     @NotNull
-    private Integer min_time;
+    private Integer minTime;
+
     @NotNull
-    private Integer max_time;
+    private Integer maxTime;
 
     @ManyToOne
     @NotNull
@@ -47,10 +48,10 @@ public class Project {
     @OneToMany(mappedBy = "project")
     private List<Practice> practices;
 
-    public Project(String name, Integer min_time, Integer max_time, User user) {
+    public Project(String name, Integer minTime, Integer maxTime, User user) {
         this.name = name;
-        this.min_time = min_time;
-        this.max_time = max_time;
+        this.minTime = minTime;
+        this.maxTime = maxTime;
         this.user = user;
     }
 }

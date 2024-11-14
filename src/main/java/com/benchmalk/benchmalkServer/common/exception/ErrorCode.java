@@ -39,7 +39,8 @@ public enum ErrorCode {
      * 409 CONFLICT
      */
     USERNAME_CONFLICT(HttpStatus.CONFLICT, "존재하는 회원 이름입니다."),
-    PROJECT_CONFLICT(HttpStatus.CONFLICT, "해당 회원에게 이미 존재하는 회원 이름입니다."),
+    PROJECT_CONFLICT(HttpStatus.CONFLICT, "해당 회원에게 이미 존재하는 프로젝트 이름입니다."),
+    MODEL_CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 모델명 입니다."),
 
     /*
      * 500 INTERNAL_SERVER_ERROR: 내부 서버 오류

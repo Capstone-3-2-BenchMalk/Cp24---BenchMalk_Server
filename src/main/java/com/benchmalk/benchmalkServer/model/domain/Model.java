@@ -1,7 +1,16 @@
 package com.benchmalk.benchmalkServer.model.domain;
 
+import com.benchmalk.benchmalkServer.common.exception.CustomException;
+import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.user.domain.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,24 +28,35 @@ public class Model {
     private Long id;
 
     @NotNull
-    @Column(unique = true)
     private String name;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private ModelType model_type;
+    private ModelType modelType;
 
     @NotNull
-    private LocalDateTime created_date = LocalDateTime.now();
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @ManyToOne
     private User user;
 
     @OneToOne
-    private ModelAnalysis model_analysis;
+    private ModelAnalysis modelAnalysis;
 
-    public Model(Long id, String name, ModelType model_type) {
+    public Model(String name, ModelType modelType) {
+        if (modelType != ModelType.PROVIDED) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
         this.name = name;
-        this.model_type = model_type;
+        this.modelType = modelType;
+    }
+
+    public Model(String name, ModelType modelType, User user) {
+        if (modelType != ModelType.CREATED) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+        this.name = name;
+        this.modelType = modelType;
+        this.user = user;
     }
 }

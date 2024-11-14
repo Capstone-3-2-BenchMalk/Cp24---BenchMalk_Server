@@ -1,7 +1,6 @@
 package com.benchmalk.benchmalkServer.project.dto;
 
 import com.benchmalk.benchmalkServer.project.domain.Project;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,8 +20,8 @@ public class ProjectResponse {
         this.id = project.getId();
         this.name = project.getName();
         this.userid = project.getUser().getUserid();
-        this.min_time = project.getMin_time();
-        this.max_time = project.getMax_time();
+        this.min_time = project.getMinTime();
+        this.max_time = project.getMaxTime();
         this.created_date = project.getCreated_date();
     }
 }

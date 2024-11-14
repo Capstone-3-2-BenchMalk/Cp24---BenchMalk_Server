@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,11 +32,11 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @PostMapping
-    public ResponseEntity<ProjectResponse> createProject(@Valid @RequestBody ProjectRequest projectRequest, BindingResult bindingResult) {
+    public ResponseEntity<ProjectResponse> createProject(@Valid @RequestBody ProjectRequest projectRequest, BindingResult bindingResult, @AuthenticationPrincipal UserDetails userDetails) {
         if (bindingResult.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
-        Project project = projectService.create(projectRequest.getUserid(), projectRequest.getName(),
+        Project project = projectService.create(userDetails.getUsername(), projectRequest.getName(),
                 projectRequest.getMin_time(), projectRequest.getMax_time());
         return ResponseEntity.ok(new ProjectResponse(project));
     }

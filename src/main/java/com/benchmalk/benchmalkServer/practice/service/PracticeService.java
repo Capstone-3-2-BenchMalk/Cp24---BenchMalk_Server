@@ -19,8 +19,11 @@ public class PracticeService {
     private final ProjectService projectService;
     private final PracticeRepository practiceRepository;
 
-    public Practice create(String name, String memo, Long projectid) {
+    public Practice create(String name, String memo, Long projectid, String userid) {
         Project project = projectService.getProject(projectid);
+        if (!project.getUser().getUserid().equals(userid)) {
+            throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
+        }
         Practice practice = new Practice(name, memo, project);
         return practiceRepository.save(practice);
     }

@@ -1,7 +1,12 @@
 package com.benchmalk.benchmalkServer.practice.domain;
 
 import com.benchmalk.benchmalkServer.project.domain.Project;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +27,7 @@ public class Practice {
     private String name;
 
     @NotNull
-    private LocalDateTime created_date = LocalDateTime.now();
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @NotNull
     private PracticeStatus status = PracticeStatus.CREATED;
@@ -34,9 +39,9 @@ public class Practice {
     private Project project;
 
     @OneToOne
-    private PracticeAnalysis practice_analysis;
+    private PracticeAnalysis practiceAnalysis;
 
-    public Practice(String name, String memo,Project project) {
+    public Practice(String name, String memo, Project project) {
         this.name = name;
         this.project = project;
         this.memo = memo;

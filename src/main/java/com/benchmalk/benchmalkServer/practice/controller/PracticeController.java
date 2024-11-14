@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,16 +35,17 @@ public class PracticeController {
     private final PracticeService practiceService;
 
     @PostMapping
-    public ResponseEntity<PracticeResponse> createPractice(@Valid @RequestPart(value = "json") PracticeRequest practiceRequest, BindingResult bindingResult, @RequestPart MultipartFile file) throws IOException {
+    public ResponseEntity<PracticeResponse> createPractice(@Valid @RequestPart(value = "json") PracticeRequest practiceRequest, BindingResult bindingResult, @RequestPart MultipartFile file
+            , @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         if (bindingResult.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
         String fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
-        if (fileExtension == null || !List.of(".mp3", ".mp4").contains(fileExtension)) {
+        if (fileExtension == null || !List.of("mp3", "mp4").contains(fileExtension)) {
             throw new CustomException(ErrorCode.BAD_FILE_EXTENSION);
         }
         Practice practice = practiceService.create(practiceRequest.getName(),
-                practiceRequest.getMemo(), Long.parseLong(practiceRequest.getProjectid()));
+                practiceRequest.getMemo(), Long.parseLong(practiceRequest.getProjectid()), userDetails.getUsername());
 
 //        String uploadPath = "C:/Users/dksvl/Desktop/";
 //        String originalFileName = file.getOriginalFilename();
