@@ -6,6 +6,7 @@ import com.benchmalk.benchmalkServer.practice.domain.Practice;
 import com.benchmalk.benchmalkServer.practice.dto.PracticeModifyRequest;
 import com.benchmalk.benchmalkServer.practice.dto.PracticeRequest;
 import com.benchmalk.benchmalkServer.practice.dto.PracticeResponse;
+import com.benchmalk.benchmalkServer.practice.service.PracticeFileManager;
 import com.benchmalk.benchmalkServer.practice.service.PracticeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ import java.util.List;
 @RequestMapping("/api/v1/practices")
 public class PracticeController {
     private final PracticeService practiceService;
+    private final PracticeFileManager practiceFileManager;
 
     @PostMapping
     public ResponseEntity<PracticeResponse> createPractice(@Valid @RequestPart(value = "json") PracticeRequest practiceRequest, @RequestPart MultipartFile file
@@ -46,11 +48,8 @@ public class PracticeController {
         Practice practice = practiceService.create(practiceRequest.getName(),
                 practiceRequest.getMemo(), Long.parseLong(practiceRequest.getProjectid()), userDetails.getUsername());
 
-//        String uploadPath = "C:/Users/dksvl/Desktop/";
-//        String originalFileName = file.getOriginalFilename();
-//        String savedFileName = UUID.randomUUID().toString() + "_" + originalFileName;
-//        File file1 = new File(uploadPath + savedFileName);
-//        file.transferTo(file1);
+        practiceFileManager.saveFile(file);
+
         return ResponseEntity.ok(new PracticeResponse(practice));
     }
 
