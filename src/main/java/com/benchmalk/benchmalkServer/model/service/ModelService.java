@@ -29,7 +29,7 @@ public class ModelService {
                 throw new CustomException(ErrorCode.MODEL_CONFLICT);
             }
             String filepath = fileManager.saveModel(file, type);
-            Model model = new Model(name, type, user);
+            Model model = new Model(name, type, user, filepath);
             return modelRepository.save(model);
         }
         if (type == ModelType.PROVIDED) {
@@ -37,7 +37,7 @@ public class ModelService {
                 throw new CustomException(ErrorCode.MODEL_CONFLICT);
             }
             String filepath = fileManager.saveModel(file, type);
-            Model model = new Model(name, type);
+            Model model = new Model(name, type, filepath);
             return modelRepository.save(model);
         }
         throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
