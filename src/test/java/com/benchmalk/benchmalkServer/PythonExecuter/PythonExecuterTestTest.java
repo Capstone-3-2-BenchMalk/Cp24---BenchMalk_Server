@@ -1,11 +1,10 @@
 package com.benchmalk.benchmalkServer.PythonExecuter;
 
+import com.benchmalk.benchmalkServer.util.PythonExecuter.PythonExecuterTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 class PythonExecuterTestTest {

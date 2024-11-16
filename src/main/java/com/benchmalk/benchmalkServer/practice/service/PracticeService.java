@@ -6,24 +6,26 @@ import com.benchmalk.benchmalkServer.practice.domain.Practice;
 import com.benchmalk.benchmalkServer.practice.repository.PracticeRepository;
 import com.benchmalk.benchmalkServer.project.domain.Project;
 import com.benchmalk.benchmalkServer.project.service.ProjectService;
-import com.benchmalk.benchmalkServer.user.service.UserService;
+import com.benchmalk.benchmalkServer.util.FileManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class PracticeService {
-    private final UserService userService;
     private final ProjectService projectService;
     private final PracticeRepository practiceRepository;
+    private final FileManager fileManager;
 
-    public Practice create(String name, String memo, Long projectid, String userid) {
+    public Practice create(String name, String memo, Long projectid, String userid, MultipartFile file) {
         Project project = projectService.getProject(projectid);
         if (!project.getUser().getUserid().equals(userid)) {
             throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
         }
+        fileManager.savePractice(file);
         Practice practice = new Practice(name, memo, project);
         return practiceRepository.save(practice);
     }
