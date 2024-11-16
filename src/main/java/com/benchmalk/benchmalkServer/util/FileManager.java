@@ -1,8 +1,9 @@
-package com.benchmalk.benchmalkServer.practice.service;
+package com.benchmalk.benchmalkServer.util;
 
 
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
+import com.benchmalk.benchmalkServer.model.domain.ModelType;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class PracticeFileManager {
+public class FileManager {
 
     @PostConstruct
     public void init() {
@@ -26,13 +27,28 @@ public class PracticeFileManager {
         }
     }
 
-    public String saveFile(MultipartFile file) {
+    public String saveModel(MultipartFile file, ModelType modelType) {
+        if (modelType == ModelType.PROVIDED) {
+            String savedFileName = "Model_PROVIDED_" + file.getOriginalFilename();
+            return saveFile(file, savedFileName);
+        }
+        if (modelType == ModelType.CREATED) {
+            String savedFileName = "Model_" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            return saveFile(file, savedFileName);
+        }
+        throw new CustomException(ErrorCode.BAD_REQUEST);
+    }
+
+    public String savePractice(MultipartFile file) {
+        String savedFileName = "Practice_" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        return saveFile(file, savedFileName);
+    }
+
+    private String saveFile(MultipartFile file, String filename) {
         try {
             String home = System.getProperty("user.home");
             String uploadPath = home + "/benchmalk/files/";
-            String originalFileName = file.getOriginalFilename();
-            String savedFileName = UUID.randomUUID().toString() + "_" + originalFileName;
-            File file1 = new File(uploadPath + savedFileName);
+            File file1 = new File(uploadPath + filename);
             file.transferTo(file1.getCanonicalFile());
             return file1.getCanonicalPath();
         } catch (IOException e) {

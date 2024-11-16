@@ -7,8 +7,10 @@ import com.benchmalk.benchmalkServer.model.domain.ModelType;
 import com.benchmalk.benchmalkServer.model.repository.ModelRepository;
 import com.benchmalk.benchmalkServer.user.domain.User;
 import com.benchmalk.benchmalkServer.user.service.UserService;
+import com.benchmalk.benchmalkServer.util.FileManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +20,15 @@ import java.util.List;
 public class ModelService {
     private final ModelRepository modelRepository;
     private final UserService userService;
+    private final FileManager fileManager;
 
-    public Model create(String userid, String name, ModelType type) {
+    public Model create(String userid, String name, ModelType type, MultipartFile file) {
         if (type == ModelType.CREATED) {
             User user = userService.getUserByUserId(userid);
             if (modelRepository.existsByNameAndUser(name, user)) {
                 throw new CustomException(ErrorCode.MODEL_CONFLICT);
             }
+            String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, type, user);
             return modelRepository.save(model);
         }
@@ -32,7 +36,8 @@ public class ModelService {
             if (modelRepository.existsByNameAndModelType(name, type)) {
                 throw new CustomException(ErrorCode.MODEL_CONFLICT);
             }
-            Model model = new Model(name, ModelType.PROVIDED);
+            String filepath = fileManager.saveModel(file, type);
+            Model model = new Model(name, type);
             return modelRepository.save(model);
         }
         throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);

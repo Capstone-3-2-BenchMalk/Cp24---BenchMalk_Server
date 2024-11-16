@@ -39,13 +39,7 @@ public class ModelController {
         if (fileExtension == null || !List.of("mp3", "mp4").contains(fileExtension)) {
             throw new CustomException(ErrorCode.BAD_FILE_EXTENSION);
         }
-        Model model = modelService.create(userDetails.getUsername(), modelRequest.getName(), modelRequest.getType());
-
-//        String uploadPath = "C:/Users/dksvl/Desktop/";
-//        String originalFileName = file.getOriginalFilename();
-//        String savedFileName = UUID.randomUUID().toString() + "_" + originalFileName;
-//        File file1 = new File(uploadPath + savedFileName);
-//        file.transferTo(file1);
+        Model model = modelService.create(userDetails.getUsername(), modelRequest.getName(), modelRequest.getType(), file);
         return ResponseEntity.ok(new ModelResponse(model));
     }
 

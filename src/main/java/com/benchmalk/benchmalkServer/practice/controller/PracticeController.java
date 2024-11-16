@@ -6,7 +6,6 @@ import com.benchmalk.benchmalkServer.practice.domain.Practice;
 import com.benchmalk.benchmalkServer.practice.dto.PracticeModifyRequest;
 import com.benchmalk.benchmalkServer.practice.dto.PracticeRequest;
 import com.benchmalk.benchmalkServer.practice.dto.PracticeResponse;
-import com.benchmalk.benchmalkServer.practice.service.PracticeFileManager;
 import com.benchmalk.benchmalkServer.practice.service.PracticeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,6 @@ import java.util.List;
 @RequestMapping("/api/v1/practices")
 public class PracticeController {
     private final PracticeService practiceService;
-    private final PracticeFileManager practiceFileManager;
 
     @PostMapping
     public ResponseEntity<PracticeResponse> createPractice(@Valid @RequestPart(value = "json") PracticeRequest practiceRequest, @RequestPart MultipartFile file
@@ -46,9 +44,7 @@ public class PracticeController {
             throw new CustomException(ErrorCode.BAD_FILE_EXTENSION);
         }
         Practice practice = practiceService.create(practiceRequest.getName(),
-                practiceRequest.getMemo(), Long.parseLong(practiceRequest.getProjectid()), userDetails.getUsername());
-
-        practiceFileManager.saveFile(file);
+                practiceRequest.getMemo(), Long.parseLong(practiceRequest.getProjectid()), userDetails.getUsername(), file);
 
         return ResponseEntity.ok(new PracticeResponse(practice));
     }
