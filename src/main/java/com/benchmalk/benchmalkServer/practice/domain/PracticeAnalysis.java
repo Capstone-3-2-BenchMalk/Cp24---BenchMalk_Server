@@ -1,6 +1,10 @@
 package com.benchmalk.benchmalkServer.practice.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +23,6 @@ public class PracticeAnalysis {
     private Integer wps;
     private Integer pitch;
 
-    @OneToMany(mappedBy = "practice_analysis")
+    @OneToMany(mappedBy = "practiceAnalysis")
     private List<PracticeSentence> sentences;
 }

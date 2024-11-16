@@ -2,10 +2,13 @@ package com.benchmalk.benchmalkServer.clova;
 
 import com.benchmalk.benchmalkServer.clova.dto.ClovaRequest;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaResponse;
+import com.benchmalk.benchmalkServer.util.ClovaParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
@@ -27,14 +30,16 @@ import java.util.HashMap;
 @Slf4j
 @RequestMapping("/clova/test")
 @Getter
+@RequiredArgsConstructor
 public class APITEST {
-    private final String INVOKE_URL = "https://clovaspeech-gw.ncloud.com/external/v1/9563/3dc2c1a26515455b6c9143973c8d3c33829949684f0edd6cc49e5b233f51bf8c";
-    private final String secret = "5f12eb037a7d4c699c1b850cb06d3483";
+    private final String INVOKE_URL = "https://clovaspeech-gw.ncloud.com/external/v1/9572/27facad300bf3a3cb0613afaa165db17b0e16a6c8d7a992f6b3bc4ec46912f56";
+    private final String secret = "c49bca2a826f408bb91fb17da054f6c5";
     private WebClient webClient;
+    private final ClovaParser clovaParser;
 
-    public APITEST() {
 
-
+    @PostConstruct
+    public void init() {
         this.webClient = WebClient.builder()
                 .baseUrl(INVOKE_URL)
                 .defaultHeaders(httpheaders -> {
@@ -59,7 +64,7 @@ public class APITEST {
                     .retrieve()
                     .bodyToMono(ClovaResponse.class)
                     .block();
-            System.out.println(new ObjectMapper().writeValueAsString(monoResponse));
+            clovaParser.parsePractice(monoResponse);
         } catch (WebClientResponseException e) {
             System.out.println(e.getResponseBodyAsString());
             System.out.println(e.getStatusCode() + e.getStatusText());
