@@ -1,5 +1,8 @@
 package com.benchmalk.benchmalkServer.clova;
 
+import com.benchmalk.benchmalkServer.clova.dto.ClovaRequest;
+import com.benchmalk.benchmalkServer.clova.dto.ClovaResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
@@ -44,18 +47,19 @@ public class APITEST {
     public void request() {
         try {
             MultipartBodyBuilder builder = new MultipartBodyBuilder();
-            File file = new File("src/files/test.mp4");
+            String homePath = System.getProperty("user.home");
+            File file = new File(homePath + "/benchmalk/files/test.mp3");
             builder.part("media", new FileSystemResource(file));
-            builder.part("params", APIparams.builder().language("enko").completion("sync").build());
-            String monoResponse = webClient.mutate().build().post()
+            builder.part("params", ClovaRequest.builder().language("enko").completion("sync").build());
+            ClovaResponse monoResponse = webClient.mutate().build().post()
                     .uri("/recognizer/upload")
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .accept(MediaType.APPLICATION_JSON)
                     .bodyValue(builder.build())
                     .retrieve()
-                    .bodyToMono(String.class)
+                    .bodyToMono(ClovaResponse.class)
                     .block();
-            System.out.println(monoResponse);
+            System.out.println(new ObjectMapper().writeValueAsString(monoResponse));
         } catch (WebClientResponseException e) {
             System.out.println(e.getResponseBodyAsString());
             System.out.println(e.getStatusCode() + e.getStatusText());
@@ -71,15 +75,21 @@ public class APITEST {
             MultipartBodyBuilder builder = new MultipartBodyBuilder();
             File file = new File("src/files/test.mp4");
             builder.part("media", new FileSystemResource(file));
-            builder.part("params", APIparams.builder().language("enko").completion("async").callback("http://144.24.94.110:8080//clova/test/getC").build());
-            Mono<String> monoResponse = webClient.mutate().build().post()
+            builder.part("params", ClovaRequest.builder().language("enko").completion("async").callback("http://144.24.94.110:8080//clova/test/getC").build());
+            Mono<ClovaResponse> monoResponse = webClient.mutate().build().post()
                     .uri("/recognizer/upload")
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .accept(MediaType.APPLICATION_JSON)
                     .bodyValue(builder.build())
                     .retrieve()
-                    .bodyToMono(String.class);
-            monoResponse.subscribe(this::print);
+                    .bodyToMono(ClovaResponse.class);
+            monoResponse.subscribe(r -> {
+                try {
+                    System.out.println(new ObjectMapper().writeValueAsString(r));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         } catch (WebClientResponseException e) {
             System.out.println(e.getResponseBodyAsString());
             System.out.println(e);
