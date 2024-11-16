@@ -24,7 +24,7 @@ class FileManagerTest {
 
     @Test
     void saveAndDeletePractice() {
-        MockMultipartFile mockFile = new MockMultipartFile("file", "test.txt", "text/plain", "hello".getBytes());
+        MockMultipartFile mockFile = new MockMultipartFile("file", "test.mp3", "text/plain", "hello".getBytes());
         String filepath = fileManager.savePractice(mockFile);
         File file = new File(filepath);
         assertThat(file.exists()).isTrue();
@@ -35,7 +35,7 @@ class FileManagerTest {
 
     @Test
     void saveAndDeleteProvidedModel() {
-        MockMultipartFile mockFile = new MockMultipartFile("file", "test.txt", "text/plain", "hello".getBytes());
+        MockMultipartFile mockFile = new MockMultipartFile("file", "test.mp3", "text/plain", "hello".getBytes());
         String filepath = fileManager.saveModel(mockFile, ModelType.PROVIDED);
         File file = new File(filepath);
         assertThat(file.exists()).isTrue();
@@ -46,7 +46,7 @@ class FileManagerTest {
 
     @Test
     void saveAndDeleteCreatedModel() {
-        MockMultipartFile mockFile = new MockMultipartFile("file", "test.txt", "text/plain", "hello".getBytes());
+        MockMultipartFile mockFile = new MockMultipartFile("file", "test.mp3", "text/plain", "hello".getBytes());
         String filepath = fileManager.saveModel(mockFile, ModelType.CREATED);
         File file = new File(filepath);
         assertThat(file.exists()).isTrue();

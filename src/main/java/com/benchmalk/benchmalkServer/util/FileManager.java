@@ -7,10 +7,12 @@ import com.benchmalk.benchmalkServer.model.domain.ModelType;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -45,6 +47,10 @@ public class FileManager {
     }
 
     private String saveFile(MultipartFile file, String filename) {
+        String fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+        if (fileExtension == null || !List.of("mp3").contains(fileExtension)) {
+            throw new CustomException(ErrorCode.BAD_FILE_EXTENSION);
+        }
         try {
             String home = System.getProperty("user.home");
             String uploadPath = home + "/benchmalk/files/";

@@ -1,7 +1,5 @@
 package com.benchmalk.benchmalkServer.practice.controller;
 
-import com.benchmalk.benchmalkServer.common.exception.CustomException;
-import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.practice.domain.Practice;
 import com.benchmalk.benchmalkServer.practice.dto.PracticeModifyRequest;
 import com.benchmalk.benchmalkServer.practice.dto.PracticeRequest;
@@ -13,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -39,10 +36,6 @@ public class PracticeController {
     @PostMapping
     public ResponseEntity<PracticeResponse> createPractice(@Valid @RequestPart(value = "json") PracticeRequest practiceRequest, @RequestPart MultipartFile file
             , @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        String fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
-        if (fileExtension == null || !List.of("mp3", "mp4").contains(fileExtension)) {
-            throw new CustomException(ErrorCode.BAD_FILE_EXTENSION);
-        }
         Practice practice = practiceService.create(practiceRequest.getName(),
                 practiceRequest.getMemo(), Long.parseLong(practiceRequest.getProjectid()), userDetails.getUsername(), file);
 

@@ -1,7 +1,5 @@
 package com.benchmalk.benchmalkServer.model.controller;
 
-import com.benchmalk.benchmalkServer.common.exception.CustomException;
-import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.model.domain.Model;
 import com.benchmalk.benchmalkServer.model.dto.ModelRequest;
 import com.benchmalk.benchmalkServer.model.dto.ModelResponse;
@@ -12,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,10 +32,6 @@ public class ModelController {
     @PostMapping
     public ResponseEntity<ModelResponse> createModel(@Valid @RequestPart(value = "json") ModelRequest modelRequest, @RequestPart MultipartFile file
             , @AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        String fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
-        if (fileExtension == null || !List.of("mp3", "mp4").contains(fileExtension)) {
-            throw new CustomException(ErrorCode.BAD_FILE_EXTENSION);
-        }
         Model model = modelService.create(userDetails.getUsername(), modelRequest.getName(), modelRequest.getType(), file);
         return ResponseEntity.ok(new ModelResponse(model));
     }
