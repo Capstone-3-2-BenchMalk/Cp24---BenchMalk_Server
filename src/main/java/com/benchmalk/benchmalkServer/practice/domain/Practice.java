@@ -1,5 +1,6 @@
 package com.benchmalk.benchmalkServer.practice.domain;
 
+import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
 import com.benchmalk.benchmalkServer.project.domain.Project;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,7 +41,7 @@ public class Practice {
     private Project project;
 
     @OneToOne
-    private PracticeAnalysis practiceAnalysis;
+    private ClovaAnalysis clovaAnalysis;
 
     public Practice(String name, String memo, Project project) {
         this.name = name;

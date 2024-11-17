@@ -1,5 +1,7 @@
 package com.benchmalk.benchmalkServer.model.service;
 
+import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
+import com.benchmalk.benchmalkServer.clova.service.ClovaService;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.model.domain.Model;
@@ -21,6 +23,7 @@ public class ModelService {
     private final ModelRepository modelRepository;
     private final UserService userService;
     private final FileManager fileManager;
+    private final ClovaService clovaService;
 
     public Model create(String userid, String name, ModelType type, MultipartFile file) {
         if (type == ModelType.CREATED) {
@@ -30,6 +33,7 @@ public class ModelService {
             }
             String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, type, user, filepath);
+            clovaService.callClova(filepath, model);
             return modelRepository.save(model);
         }
         if (type == ModelType.PROVIDED) {
@@ -38,6 +42,7 @@ public class ModelService {
             }
             String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, type, filepath);
+            clovaService.callClova(filepath, model);
             return modelRepository.save(model);
         }
         throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
@@ -60,5 +65,11 @@ public class ModelService {
             models.addAll(modelRepository.findByUser(userService.getUserByUserId(userid)));
         }
         return models;
+    }
+
+    public void setModelAnalysis(Long modelid, ClovaAnalysis clovaAnalysis) {
+        Model model = getModel(modelid);
+        model.setClovaAnalysis(clovaAnalysis);
+        modelRepository.save(model);
     }
 }

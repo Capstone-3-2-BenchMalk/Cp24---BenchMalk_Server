@@ -1,4 +1,4 @@
-package com.benchmalk.benchmalkServer.practice.domain;
+package com.benchmalk.benchmalkServer.clova.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PracticeSentence {
+public class ClovaSentence {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,9 +31,9 @@ public class PracticeSentence {
     private Integer wpm;
     private Integer energy;
 
-    @OneToMany(mappedBy = "practiceSentence")
-    private List<PracticeWord> practiceWords;
+    @OneToMany(mappedBy = "clovaSentence")
+    private List<ClovaWord> clovaWords;
 
     @ManyToOne
-    private PracticeAnalysis practiceAnalysis;
+    private ClovaAnalysis clovaAnalysis;
 }
