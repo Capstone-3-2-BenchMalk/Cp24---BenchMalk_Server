@@ -1,6 +1,6 @@
 package com.benchmalk.benchmalkServer.model.service;
 
-import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
+import com.benchmalk.benchmalkServer.clova.dto.ClovaResponse;
 import com.benchmalk.benchmalkServer.clova.service.ClovaService;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
@@ -9,6 +9,7 @@ import com.benchmalk.benchmalkServer.model.domain.ModelType;
 import com.benchmalk.benchmalkServer.model.repository.ModelRepository;
 import com.benchmalk.benchmalkServer.user.domain.User;
 import com.benchmalk.benchmalkServer.user.service.UserService;
+import com.benchmalk.benchmalkServer.util.ClovaParser;
 import com.benchmalk.benchmalkServer.util.FileManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class ModelService {
     private final UserService userService;
     private final FileManager fileManager;
     private final ClovaService clovaService;
+    private final ClovaParser clovaParser;
 
     public Model create(String userid, String name, ModelType type, MultipartFile file) {
         if (type == ModelType.CREATED) {
@@ -33,7 +35,7 @@ public class ModelService {
             }
             String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, type, user, filepath);
-            clovaService.callClova(filepath, model);
+            clovaService.callClova(filepath).subscribe(m -> setModelAnalysis(model.getId(), m));
             return modelRepository.save(model);
         }
         if (type == ModelType.PROVIDED) {
@@ -42,7 +44,7 @@ public class ModelService {
             }
             String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, type, filepath);
-            clovaService.callClova(filepath, model);
+            clovaService.callClova(filepath).subscribe(m -> setModelAnalysis(model.getId(), m));
             return modelRepository.save(model);
         }
         throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
@@ -67,9 +69,9 @@ public class ModelService {
         return models;
     }
 
-    public void setModelAnalysis(Long modelid, ClovaAnalysis clovaAnalysis) {
+    public void setModelAnalysis(Long modelid, ClovaResponse clovaResponse) {
         Model model = getModel(modelid);
-        model.setClovaAnalysis(clovaAnalysis);
+        model.setClovaAnalysis(clovaParser.parse(clovaResponse));
         modelRepository.save(model);
     }
 }

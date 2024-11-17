@@ -4,12 +4,6 @@ import com.benchmalk.benchmalkServer.clova.dto.ClovaRequest;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaResponse;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
-import com.benchmalk.benchmalkServer.model.domain.Model;
-import com.benchmalk.benchmalkServer.model.service.ModelService;
-import com.benchmalk.benchmalkServer.practice.domain.Practice;
-import com.benchmalk.benchmalkServer.practice.service.PracticeService;
-import com.benchmalk.benchmalkServer.util.ClovaParser;
-import com.benchmalk.benchmalkServer.util.FileManager;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
@@ -28,10 +22,6 @@ public class ClovaService {
     private final String INVOKE_URL = "https://clovaspeech-gw.ncloud.com/external/v1/9572/27facad300bf3a3cb0613afaa165db17b0e16a6c8d7a992f6b3bc4ec46912f56";
     private final String secret = "c49bca2a826f408bb91fb17da054f6c5";
     private WebClient webClient;
-    private final ClovaParser clovaParser;
-    private final FileManager fileManager;
-    private final PracticeService practiceService;
-    private final ModelService modelService;
 
 
     @PostConstruct
@@ -44,11 +34,7 @@ public class ClovaService {
                 .build();
     }
 
-    public void callClova(String filePath, Object object) {
-        if (!(object instanceof Practice) && !(object instanceof Model)) {
-            System.out.println("잘못된 메서드 호출 : Practice나 Model을 전달해야 합니다.");
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+    public Mono<ClovaResponse> callClova(String filePath) {
         try {
             MultipartBodyBuilder builder = new MultipartBodyBuilder();
             File file = new File(filePath);
@@ -61,23 +47,11 @@ public class ClovaService {
                     .bodyValue(builder.build())
                     .retrieve()
                     .bodyToMono(ClovaResponse.class);
-            monoResponse.subscribe(m -> setAnalysis(m, object, filePath));
+            return monoResponse;
         } catch (WebClientResponseException e) {
             System.out.println(e.getResponseBodyAsString());
             System.out.println(e.getStatusCode() + e.getStatusText());
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public void setAnalysis(ClovaResponse clovaResponse, Object object, String filePath) {
-        if (object instanceof Practice) {
-            practiceService.setPracticeAnalysis(((Practice) object).getId(), clovaParser.parse(clovaResponse));
-            fileManager.deleteFile(filePath);
-            return;
-        }
-        if (object instanceof Model) {
-            modelService.setModelAnalysis(((Model) object).getId(), clovaParser.parse(clovaResponse));
-            return;
         }
     }
 
