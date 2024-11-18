@@ -1,5 +1,6 @@
 package com.benchmalk.benchmalkServer.clova.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,7 +32,7 @@ public class ClovaSentence {
     private Integer wpm;
     private Integer energy;
 
-    @OneToMany(mappedBy = "clovaSentence")
+    @OneToMany(mappedBy = "clovaSentence", cascade = CascadeType.ALL)
     private List<ClovaWord> clovaWords;
 
     @ManyToOne

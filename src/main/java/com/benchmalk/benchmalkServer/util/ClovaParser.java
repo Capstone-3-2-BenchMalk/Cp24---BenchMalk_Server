@@ -11,12 +11,12 @@ import com.benchmalk.benchmalkServer.clova.repository.ClovaWordRepository;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class ClovaParser {
     private final ClovaAnalysisRepository clovaAnalysisRepository;
@@ -29,32 +29,33 @@ public class ClovaParser {
             System.out.println(response.getMessage());
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
-        clovaAnalysisRepository.save(analysis);
+        analysis.setSentences(new ArrayList<>());
         response.getSegments().stream().forEach(segment -> {
-            parseSentence(segment, analysis.getId());
+            analysis.getSentences().add(parseSentence(segment, analysis));
         });
         return analysis;
     }
 
-    private void parseSentence(ClovaResponseSegments segment, Long analysisId) {
+    private ClovaSentence parseSentence(ClovaResponseSegments segment, ClovaAnalysis analysis) {
         ClovaSentence sentence = new ClovaSentence();
         sentence.setSentence(segment.getText());
         sentence.setStart(segment.getStart());
         sentence.setEnd(segment.getEnd());
-        sentence.setClovaAnalysis(clovaAnalysisRepository.findById(analysisId).get());
-        clovaSentenceRepository.save(sentence);
-        parseWords(segment.getWords(), sentence.getId());
+        sentence.setClovaAnalysis(analysis);
+        sentence.setClovaWords(parseWords(segment.getWords(), sentence));
+        return sentence;
     }
 
-    private void parseWords(List<List<Object>> words, Long sentenceId) {
+    private List<ClovaWord> parseWords(List<List<Object>> words, ClovaSentence sentence) {
         List<ClovaWord> wordsList = new ArrayList<ClovaWord>();
         for (int i = 0; i < words.size() - 1; i++) {
             ClovaWord word = new ClovaWord();
             word.setStart(Long.valueOf((Integer) words.get(i).get(0)));
             word.setEnd(Long.valueOf((Integer) words.get(i).get(1)));
             word.setWord(words.get(i).get(2).toString());
-            word.setClovaSentence(clovaSentenceRepository.findById(sentenceId).get());
-            clovaWordRepository.save(word);
+            word.setClovaSentence(sentence);
+            wordsList.add(word);
         }
+        return wordsList;
     }
 }

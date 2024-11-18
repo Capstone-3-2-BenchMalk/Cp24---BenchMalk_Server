@@ -1,5 +1,6 @@
 package com.benchmalk.benchmalkServer.model.service;
 
+import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaResponse;
 import com.benchmalk.benchmalkServer.clova.service.ClovaService;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
@@ -9,7 +10,6 @@ import com.benchmalk.benchmalkServer.model.domain.ModelType;
 import com.benchmalk.benchmalkServer.model.repository.ModelRepository;
 import com.benchmalk.benchmalkServer.user.domain.User;
 import com.benchmalk.benchmalkServer.user.service.UserService;
-import com.benchmalk.benchmalkServer.util.ClovaParser;
 import com.benchmalk.benchmalkServer.util.FileManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,6 @@ public class ModelService {
     private final UserService userService;
     private final FileManager fileManager;
     private final ClovaService clovaService;
-    private final ClovaParser clovaParser;
 
     public Model create(String userid, String name, ModelType type, MultipartFile file) {
         if (type == ModelType.CREATED) {
@@ -71,7 +70,8 @@ public class ModelService {
 
     public void setModelAnalysis(Long modelid, ClovaResponse clovaResponse) {
         Model model = getModel(modelid);
-        model.setClovaAnalysis(clovaParser.parse(clovaResponse));
+        ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse);
+        model.setClovaAnalysis(analysis);
         modelRepository.save(model);
     }
 }

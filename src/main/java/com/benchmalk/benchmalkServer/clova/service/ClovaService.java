@@ -1,9 +1,12 @@
 package com.benchmalk.benchmalkServer.clova.service;
 
+import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaRequest;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaResponse;
+import com.benchmalk.benchmalkServer.clova.repository.ClovaAnalysisRepository;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
+import com.benchmalk.benchmalkServer.util.ClovaParser;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
@@ -19,6 +22,9 @@ import java.io.File;
 @Service
 @RequiredArgsConstructor
 public class ClovaService {
+    private final ClovaAnalysisRepository clovaAnalysisRepository;
+    private final ClovaParser clovaParser;
+
     private final String INVOKE_URL = "https://clovaspeech-gw.ncloud.com/external/v1/9572/27facad300bf3a3cb0613afaa165db17b0e16a6c8d7a992f6b3bc4ec46912f56";
     private final String secret = "c49bca2a826f408bb91fb17da054f6c5";
     private WebClient webClient;
@@ -53,6 +59,12 @@ public class ClovaService {
             System.out.println(e.getStatusCode() + e.getStatusText());
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public ClovaAnalysis createAnalysis(ClovaResponse clovaResponse) {
+        ClovaAnalysis analysis = clovaParser.parse(clovaResponse);
+        clovaAnalysisRepository.save(analysis);
+        return analysis;
     }
 
 //    public void callback() {
