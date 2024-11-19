@@ -1,5 +1,6 @@
 package com.benchmalk.benchmalkServer.model.domain;
 
+import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.user.domain.User;
@@ -45,7 +46,7 @@ public class Model {
     private String filepath;
 
     @OneToOne
-    private ModelAnalysis modelAnalysis;
+    private ClovaAnalysis clovaAnalysis;
 
     public Model(String name, ModelType modelType, String filepath) {
         if (modelType != ModelType.PROVIDED) {

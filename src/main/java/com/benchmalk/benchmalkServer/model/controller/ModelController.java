@@ -7,6 +7,9 @@ import com.benchmalk.benchmalkServer.model.service.ModelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,4 +53,11 @@ public class ModelController {
     public ResponseEntity<List<ModelResponse>> getModels(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(modelService.getModels(userDetails.getUsername()).stream().map(ModelResponse::new).toList());
     }
+
+    @GetMapping("/files/{modelid}")
+    public ResponseEntity<Resource> getFile(@PathVariable Long modelid) {
+        Resource resource = modelService.getModelFIle(modelid);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.parseMediaType("audio/mpeg")).body(resource);
+    }
+
 }
