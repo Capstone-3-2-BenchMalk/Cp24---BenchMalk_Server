@@ -1,4 +1,4 @@
-package com.benchmalk.benchmalkServer.clova;
+package com.benchmalk.benchmalkServer.clova.dto;
 
 
 import lombok.Builder;
@@ -10,7 +10,7 @@ import java.lang.reflect.Array;
 @Setter
 @Getter
 @Builder
-public class APIparams {
+public class ClovaRequest {
     private String language;
     private String completion;
     private String callback;

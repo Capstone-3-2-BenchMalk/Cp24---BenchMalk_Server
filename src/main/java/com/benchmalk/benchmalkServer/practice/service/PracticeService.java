@@ -1,30 +1,37 @@
 package com.benchmalk.benchmalkServer.practice.service;
 
+import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
+import com.benchmalk.benchmalkServer.clova.dto.ClovaResponse;
+import com.benchmalk.benchmalkServer.clova.service.ClovaService;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.practice.domain.Practice;
 import com.benchmalk.benchmalkServer.practice.repository.PracticeRepository;
 import com.benchmalk.benchmalkServer.project.domain.Project;
 import com.benchmalk.benchmalkServer.project.service.ProjectService;
-import com.benchmalk.benchmalkServer.user.service.UserService;
+import com.benchmalk.benchmalkServer.util.FileManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class PracticeService {
-    private final UserService userService;
     private final ProjectService projectService;
     private final PracticeRepository practiceRepository;
+    private final FileManager fileManager;
+    private final ClovaService clovaService;
 
-    public Practice create(String name, String memo, Long projectid, String userid) {
+    public Practice create(String name, String memo, Long projectid, String userid, MultipartFile file) {
         Project project = projectService.getProject(projectid);
         if (!project.getUser().getUserid().equals(userid)) {
             throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
         }
+        String filePath = fileManager.savePractice(file);
         Practice practice = new Practice(name, memo, project);
+        clovaService.callClova(filePath).subscribe(m -> setPracticeAnalysis(practice.getId(), m));
         return practiceRepository.save(practice);
     }
 
@@ -64,5 +71,12 @@ public class PracticeService {
             practice.setMemo(memo);
         }
         return practiceRepository.save(practice);
+    }
+
+    public void setPracticeAnalysis(Long practiceid, ClovaResponse clovaResponse) {
+        Practice practice = getPractice(practiceid);
+        ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse);
+        practice.setClovaAnalysis(analysis);
+        practiceRepository.save(practice);
     }
 }
