@@ -7,6 +7,7 @@ import com.benchmalk.benchmalkServer.clova.repository.ClovaAnalysisRepository;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.util.ClovaParser;
+import com.benchmalk.benchmalkServer.util.ScoreCalculator;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
@@ -24,6 +25,7 @@ import java.io.File;
 public class ClovaService {
     private final ClovaAnalysisRepository clovaAnalysisRepository;
     private final ClovaParser clovaParser;
+    private final ScoreCalculator scoreCalculator;
 
     private final String INVOKE_URL = "https://clovaspeech-gw.ncloud.com/external/v1/9572/27facad300bf3a3cb0613afaa165db17b0e16a6c8d7a992f6b3bc4ec46912f56";
     private final String secret = "c49bca2a826f408bb91fb17da054f6c5";
@@ -63,6 +65,10 @@ public class ClovaService {
 
     public ClovaAnalysis createAnalysis(ClovaResponse clovaResponse) {
         ClovaAnalysis analysis = clovaParser.parse(clovaResponse);
+        analysis.setWpm(scoreCalculator.calculateAnalysisWPM(analysis));
+        analysis.setRest(scoreCalculator.calculateAnalysisRest(analysis));
+        analysis.getSentences().forEach(s ->
+                s.setWpm(scoreCalculator.calculateSentenceWPM(s)));
         clovaAnalysisRepository.save(analysis);
         return analysis;
     }
