@@ -46,7 +46,7 @@ public class ClovaParser {
         return sentence;
     }
 
-    private List<ClovaWord> parseWords(List<List<Object>> words, ClovaSentence sentence) {
+    private List<ClovaWord> parseWords(List<List<?>> words, ClovaSentence sentence) {
         List<ClovaWord> wordsList = new ArrayList<ClovaWord>();
         for (int i = 0; i < words.size() - 1; i++) {
             ClovaWord word = new ClovaWord();

@@ -12,5 +12,5 @@ public class ClovaResponseSegments {
     private Long end;
     private String text;
     private Double confidence;
-    private List<List<Object>> words;
+    private List<List<?>> words;
 }

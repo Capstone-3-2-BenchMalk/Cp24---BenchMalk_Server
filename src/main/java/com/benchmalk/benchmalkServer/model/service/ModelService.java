@@ -12,9 +12,12 @@ import com.benchmalk.benchmalkServer.user.domain.User;
 import com.benchmalk.benchmalkServer.user.service.UserService;
 import com.benchmalk.benchmalkServer.util.FileManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +60,12 @@ public class ModelService {
     public Model getModel(Long modelid) {
         return modelRepository.findById(modelid)
                 .orElseThrow(() -> new CustomException(ErrorCode.MODEL_NOT_FOUND));
+    }
+
+    public Resource getModelFIle(Long modelid) {
+        String filePath = getModel(modelid).getFilepath();
+        File file = new File(filePath);
+        return new FileSystemResource(file);
     }
 
     public List<Model> getModels(String userid) {
