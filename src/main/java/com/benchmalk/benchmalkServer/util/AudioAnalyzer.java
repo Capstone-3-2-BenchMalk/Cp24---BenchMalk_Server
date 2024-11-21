@@ -21,13 +21,15 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class AudioAnalyzer {
+    // Increase buffer size and add overlap
+    int bufferSize = 4096;
+    int overlap = 1024;
+
     public List<Float> analyzePitch(String filePath) {
 
         AudioDispatcher dispatcher;
         try {
-            // Increase buffer size and add overlap
-            int bufferSize = 4096;
-            int overlap = 1024;
+
 
             AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File(filePath));
 
@@ -74,8 +76,10 @@ public class AudioAnalyzer {
         File file = new File(filePath);
         try {
             AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
-            long microseconds = (Long) fileFormat.properties().get("duration");
-            return microseconds;
+            int microseconds = (int) fileFormat.properties().get("mp3.length.bytes");
+            int frameSize = (int) fileFormat.properties().get("mp3.framesize.bytes");
+            float frameRate = (float) fileFormat.properties().get("mp3.framerate.fps");
+            return (long) (microseconds / (frameSize * frameRate));
         } catch (UnsupportedAudioFileException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
