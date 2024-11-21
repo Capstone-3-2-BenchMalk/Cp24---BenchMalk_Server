@@ -4,6 +4,8 @@ import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 import be.tarsos.dsp.pitch.PitchDetectionHandler;
 import be.tarsos.dsp.pitch.PitchProcessor;
+import com.benchmalk.benchmalkServer.common.exception.CustomException;
+import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,11 +15,12 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class AudioAnalyzer {
-    public void analyzePitch(String filePath) {
+    public List<Float> analyzePitch(String filePath) {
 
         AudioDispatcher dispatcher;
         try {
@@ -33,16 +36,11 @@ public class AudioAnalyzer {
 
             dispatcher = AudioDispatcherFactory.fromPipe(filePath, sampleRate, bufferSize, overlap);
 
-            if (dispatcher == null) {
-                System.out.println("Dispatcher 생성 실패");
-                return;
-            }
-
             ArrayList<Float> result = new ArrayList<>();
 
             PitchDetectionHandler pitchHandler = (pitchDetectionResult, audioEvent) -> {
                 float pitchInHz = pitchDetectionResult.getPitch();
-                System.out.println(audioEvent.getTimeStamp() + ": Detected pitch: " + pitchInHz + " Hz");
+//                System.out.println(audioEvent.getTimeStamp() + ": Detected pitch: " + pitchInHz + " Hz");
                 result.add(pitchInHz);
             };
 
@@ -57,13 +55,17 @@ public class AudioAnalyzer {
 
             dispatcher.run();
 
+            return result;
         } catch (UnsupportedAudioFileException e) {
             System.out.println("오디오 파일 형식 지원되지 않음: " + e.getMessage());
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             System.out.println("파일 읽기 실패: " + e.getMessage());
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         } catch (NegativeArraySizeException e) {
             System.out.println("NegativeArraySizeException 발생: 버퍼 설정 또는 샘플 레이트 확인 필요");
             e.printStackTrace();
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

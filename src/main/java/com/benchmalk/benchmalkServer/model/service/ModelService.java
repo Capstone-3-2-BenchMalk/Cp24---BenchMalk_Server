@@ -79,7 +79,7 @@ public class ModelService {
 
     public void setModelAnalysis(Long modelid, ClovaResponse clovaResponse) {
         Model model = getModel(modelid);
-        ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse);
+        ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, model.getFilepath());
         model.setClovaAnalysis(analysis);
         modelRepository.save(model);
     }
