@@ -12,6 +12,7 @@ public class ProjectResponse {
     private Long id;
     private String userid;
     private String name;
+    private Long roleModelid;
     private LocalDateTime created_date;
     private Integer min_time;
     private Integer max_time;
@@ -23,5 +24,7 @@ public class ProjectResponse {
         this.min_time = project.getMinTime();
         this.max_time = project.getMaxTime();
         this.created_date = project.getCreated_date();
+        if (project.getModel() != null)
+            this.roleModelid = project.getModel().getId();
     }
 }

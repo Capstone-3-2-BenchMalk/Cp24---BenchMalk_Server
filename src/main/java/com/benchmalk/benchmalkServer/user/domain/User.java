@@ -3,6 +3,7 @@ package com.benchmalk.benchmalkServer.user.domain;
 import com.benchmalk.benchmalkServer.model.domain.Model;
 import com.benchmalk.benchmalkServer.project.domain.Project;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,11 +44,11 @@ public class User {
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Model> addedModels;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Project> projects;
 
     public User(String userid, String username, String password) {
