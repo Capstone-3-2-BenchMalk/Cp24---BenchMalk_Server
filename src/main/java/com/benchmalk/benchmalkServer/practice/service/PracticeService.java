@@ -6,6 +6,7 @@ import com.benchmalk.benchmalkServer.clova.service.ClovaService;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.practice.domain.Practice;
+import com.benchmalk.benchmalkServer.practice.domain.PracticeStatus;
 import com.benchmalk.benchmalkServer.practice.repository.PracticeRepository;
 import com.benchmalk.benchmalkServer.project.domain.Project;
 import com.benchmalk.benchmalkServer.project.service.ProjectService;
@@ -75,8 +76,13 @@ public class PracticeService {
 
     public void setPracticeAnalysis(Long practiceid, ClovaResponse clovaResponse, String filePath) {
         Practice practice = getPractice(practiceid);
-        ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filePath);
-        practice.setClovaAnalysis(analysis);
+        try {
+            ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filePath);
+            practice.setClovaAnalysis(analysis);
+        } catch (Exception e) {
+            practice.setStatus(PracticeStatus.FAILED);
+        }
+        practice.setStatus(PracticeStatus.ANALYZED);
         practiceRepository.save(practice);
         fileManager.deleteFile(filePath);
     }
