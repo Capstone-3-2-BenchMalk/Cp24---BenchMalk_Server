@@ -4,6 +4,7 @@ import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.user.domain.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -47,7 +48,7 @@ public class Model {
 
     private Long duration;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     private ClovaAnalysis clovaAnalysis;
 
     public Model(String name, ModelType modelType, String filepath) {

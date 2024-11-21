@@ -3,6 +3,7 @@ package com.benchmalk.benchmalkServer.project.domain;
 import com.benchmalk.benchmalkServer.model.domain.Model;
 import com.benchmalk.benchmalkServer.practice.domain.Practice;
 import com.benchmalk.benchmalkServer.user.domain.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -46,7 +47,7 @@ public class Project {
     @ManyToOne
     private Model model;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
     private List<Practice> practices;
 
     public Project(String name, Integer minTime, Integer maxTime, User user) {
