@@ -30,8 +30,8 @@ public class ClovaService {
     private final ScoreCalculator scoreCalculator;
     private final AudioAnalyzer audioAnalyzer;
 
-    private final String INVOKE_URL = "https://clovaspeech-gw.ncloud.com/external/v1/9572/27facad300bf3a3cb0613afaa165db17b0e16a6c8d7a992f6b3bc4ec46912f56";
-    private final String secret = "c49bca2a826f408bb91fb17da054f6c5";
+    private final String INVOKE_URL = System.getenv("CLOVA_URL");
+    private final String secret = System.getenv("CLOVA_SECRET");
     private WebClient webClient;
 
 
