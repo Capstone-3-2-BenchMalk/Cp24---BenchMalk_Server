@@ -73,7 +73,7 @@ jobs:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           CLOVA_URL: ${{ secrets.CLOVA_URL }}
-          CLOVA_SECRET: ${ secrets.CLOVA_SECRETS }}
+          CLOVA_SECRET: ${{ secrets.CLOVA_SECRET }}
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
