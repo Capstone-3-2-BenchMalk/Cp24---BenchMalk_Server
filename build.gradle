@@ -60,6 +60,6 @@ tasks.named('test') {
 }
 
 tasks.named('bootJar') {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 jar.enabled = false
