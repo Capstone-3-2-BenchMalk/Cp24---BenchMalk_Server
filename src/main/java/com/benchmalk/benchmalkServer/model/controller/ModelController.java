@@ -32,7 +32,7 @@ import java.util.List;
 public class ModelController {
     private final ModelService modelService;
 
-    @PostMapping
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ModelResponse> createModel(@Valid @RequestPart(value = "json") ModelRequest modelRequest, @RequestPart MultipartFile file
             , @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         Model model = modelService.create(userDetails.getUsername(), modelRequest.getName(), modelRequest.getType(), file);

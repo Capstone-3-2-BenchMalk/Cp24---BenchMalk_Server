@@ -31,7 +31,7 @@ public class PracticeService {
         }
         String filePath = fileManager.savePractice(file);
         Practice practice = new Practice(name, memo, project);
-        clovaService.callClova(filePath).subscribe(m -> setPracticeAnalysis(practice.getId(), m));
+        clovaService.callClova(filePath).subscribe(m -> setPracticeAnalysis(practice.getId(), m, filePath));
         return practiceRepository.save(practice);
     }
 
@@ -73,10 +73,11 @@ public class PracticeService {
         return practiceRepository.save(practice);
     }
 
-    public void setPracticeAnalysis(Long practiceid, ClovaResponse clovaResponse) {
+    public void setPracticeAnalysis(Long practiceid, ClovaResponse clovaResponse, String filePath) {
         Practice practice = getPractice(practiceid);
-        ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse);
+        ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filePath);
         practice.setClovaAnalysis(analysis);
         practiceRepository.save(practice);
+        fileManager.deleteFile(filePath);
     }
 }

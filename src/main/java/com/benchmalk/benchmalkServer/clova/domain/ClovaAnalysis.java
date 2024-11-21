@@ -21,8 +21,11 @@ public class ClovaAnalysis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer wps;
+    private Double Confidence;
+
+    private Integer wpm;
     private Integer pitch;
+    private Integer rest;
 
     @OneToMany(mappedBy = "clovaAnalysis", cascade = CascadeType.ALL)
     private List<ClovaSentence> sentences;
