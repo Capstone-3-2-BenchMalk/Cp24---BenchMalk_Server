@@ -10,6 +10,7 @@ import com.benchmalk.benchmalkServer.practice.domain.PracticeStatus;
 import com.benchmalk.benchmalkServer.practice.repository.PracticeRepository;
 import com.benchmalk.benchmalkServer.project.domain.Project;
 import com.benchmalk.benchmalkServer.project.service.ProjectService;
+import com.benchmalk.benchmalkServer.util.AudioAnalyzer;
 import com.benchmalk.benchmalkServer.util.FileManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class PracticeService {
     private final PracticeRepository practiceRepository;
     private final FileManager fileManager;
     private final ClovaService clovaService;
+    private final AudioAnalyzer audioAnalyzer;
 
     public Practice create(String name, String memo, Long projectid, String userid, MultipartFile file) {
         Project project = projectService.getProject(projectid);
@@ -83,6 +85,7 @@ public class PracticeService {
             practice.setStatus(PracticeStatus.FAILED);
         }
         practice.setStatus(PracticeStatus.ANALYZED);
+        practice.setDuration(audioAnalyzer.getDuration(filePath));
         practiceRepository.save(practice);
         fileManager.deleteFile(filePath);
     }

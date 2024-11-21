@@ -9,6 +9,7 @@ import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -66,6 +67,19 @@ public class AudioAnalyzer {
             System.out.println("NegativeArraySizeException 발생: 버퍼 설정 또는 샘플 레이트 확인 필요");
             e.printStackTrace();
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public Long getDuration(String filePath) {
+        File file = new File(filePath);
+        try {
+            AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
+            long microseconds = (Long) fileFormat.properties().get("duration");
+            return microseconds;
+        } catch (UnsupportedAudioFileException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

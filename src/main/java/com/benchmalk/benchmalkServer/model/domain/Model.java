@@ -45,6 +45,8 @@ public class Model {
     @NotBlank
     private String filepath;
 
+    private Long duration;
+
     @OneToOne
     private ClovaAnalysis clovaAnalysis;
 

@@ -35,6 +35,7 @@ public class Practice {
     private PracticeStatus status = PracticeStatus.CREATED;
 
     private String memo;
+    private Long duration;
 
     @ManyToOne
     @NotNull

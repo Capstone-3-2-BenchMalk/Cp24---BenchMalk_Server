@@ -18,6 +18,7 @@ public class PracticeResponse {
     private String memo;
     private PracticeStatus status;
     private LocalDateTime created_date;
+    private Long duration;
     private ProjectResponse project;
     private AnalysisResponse analysis;
 
@@ -29,6 +30,7 @@ public class PracticeResponse {
         this.status = practice.getStatus();
         this.created_date = LocalDateTime.now();
         this.project = new ProjectResponse(practice.getProject());
+        this.duration = practice.getDuration();
         if (practice.getClovaAnalysis() != null) {
             this.analysis = new AnalysisResponse(practice.getClovaAnalysis());
         }
