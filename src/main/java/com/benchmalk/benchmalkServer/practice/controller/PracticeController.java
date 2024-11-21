@@ -8,6 +8,7 @@ import com.benchmalk.benchmalkServer.practice.service.PracticeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +34,7 @@ import java.util.List;
 public class PracticeController {
     private final PracticeService practiceService;
 
-    @PostMapping
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<PracticeResponse> createPractice(@Valid @RequestPart(value = "json") PracticeRequest practiceRequest, @RequestPart MultipartFile file
             , @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         Practice practice = practiceService.create(practiceRequest.getName(),

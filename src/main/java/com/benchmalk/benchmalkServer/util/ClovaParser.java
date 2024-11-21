@@ -30,6 +30,7 @@ public class ClovaParser {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
         analysis.setSentences(new ArrayList<>());
+        analysis.setConfidence(response.getConfidence());
         response.getSegments().stream().forEach(segment -> {
             analysis.getSentences().add(parseSentence(segment, analysis));
         });
@@ -41,6 +42,7 @@ public class ClovaParser {
         sentence.setSentence(segment.getText());
         sentence.setStart(segment.getStart());
         sentence.setEnd(segment.getEnd());
+        sentence.setConfidence(segment.getConfidence());
         sentence.setClovaAnalysis(analysis);
         sentence.setClovaWords(parseWords(segment.getWords(), sentence));
         return sentence;
