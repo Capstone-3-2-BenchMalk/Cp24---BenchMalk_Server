@@ -30,8 +30,8 @@ public class ClovaService {
     private final ScoreCalculator scoreCalculator;
     private final AudioAnalyzer audioAnalyzer;
 
-    private final String INVOKE_URL = System.getenv("CLOVA_URL");
-    private final String secret = System.getenv("CLOVA_SECRET");
+    private final String INVOKE_URL = System.getProperty("CLOVA_URL");
+    private final String secret = System.getProperty("CLOVA_SECRET");
     private WebClient webClient;
 
 
