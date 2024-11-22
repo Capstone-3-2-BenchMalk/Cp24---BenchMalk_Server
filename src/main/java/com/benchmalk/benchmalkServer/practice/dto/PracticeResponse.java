@@ -28,7 +28,7 @@ public class PracticeResponse {
         this.name = practice.getName();
         this.memo = practice.getMemo();
         this.status = practice.getStatus();
-        this.created_date = LocalDateTime.now();
+        this.created_date = practice.getCreatedDate();
         this.project = new ProjectResponse(practice.getProject());
         this.duration = practice.getDuration();
         if (practice.getClovaAnalysis() != null) {
