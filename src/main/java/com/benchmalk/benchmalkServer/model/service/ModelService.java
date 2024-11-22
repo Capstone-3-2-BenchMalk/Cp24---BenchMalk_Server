@@ -40,6 +40,7 @@ public class ModelService {
             String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, type, user, filepath);
             clovaService.callClova(filepath).subscribe(m -> setModelAnalysis(model.getId(), m));
+            model.setDuration(audioAnalyzer.getDuration(filepath));
             return modelRepository.save(model);
         }
         if (type == ModelType.PROVIDED) {
@@ -49,6 +50,7 @@ public class ModelService {
             String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, type, filepath);
             clovaService.callClova(filepath).subscribe(m -> setModelAnalysis(model.getId(), m));
+            model.setDuration(audioAnalyzer.getDuration(filepath));
             return modelRepository.save(model);
         }
         throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
@@ -83,7 +85,6 @@ public class ModelService {
     public void setModelAnalysis(Long modelid, ClovaResponse clovaResponse) {
         Model model = getModel(modelid);
         ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, model.getFilepath());
-        model.setDuration(audioAnalyzer.getDuration(model.getFilepath()));
         model.setClovaAnalysis(analysis);
         modelRepository.save(model);
     }
