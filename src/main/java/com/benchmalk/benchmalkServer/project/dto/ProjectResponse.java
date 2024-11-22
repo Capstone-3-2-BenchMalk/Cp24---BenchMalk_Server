@@ -1,5 +1,6 @@
 package com.benchmalk.benchmalkServer.project.dto;
 
+import com.benchmalk.benchmalkServer.model.dto.ModelResponse;
 import com.benchmalk.benchmalkServer.project.domain.Project;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,10 +13,10 @@ public class ProjectResponse {
     private Long id;
     private String userid;
     private String name;
-    private Long roleModelid;
     private LocalDateTime created_date;
     private Integer min_time;
     private Integer max_time;
+    private ModelResponse model;
 
     public ProjectResponse(Project project) {
         this.id = project.getId();
@@ -25,6 +26,6 @@ public class ProjectResponse {
         this.max_time = project.getMaxTime();
         this.created_date = project.getCreated_date();
         if (project.getModel() != null)
-            this.roleModelid = project.getModel().getId();
+            this.model = new ModelResponse(project.getModel());
     }
 }
