@@ -2,6 +2,7 @@ package com.benchmalk.benchmalkServer.practice.service;
 
 import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaResponse;
+import com.benchmalk.benchmalkServer.clova.repository.ClovaAnalysisRepository;
 import com.benchmalk.benchmalkServer.clova.service.ClovaService;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
@@ -26,6 +27,7 @@ public class PracticeService {
     private final FileManager fileManager;
     private final ClovaService clovaService;
     private final AudioAnalyzer audioAnalyzer;
+    private final ClovaAnalysisRepository clovaAnalysisRepository;
 
     public Practice create(String name, String memo, Long projectid, String userid, MultipartFile file) {
         Project project = projectService.getProject(projectid);
@@ -53,6 +55,7 @@ public class PracticeService {
         analysis.setWpm(120);
         analysis.setPitch(140);
         practice.setClovaAnalysis(analysis);
+        clovaAnalysisRepository.save(analysis);
         return practiceRepository.save(practice);
     }
 
