@@ -1,6 +1,7 @@
 package com.benchmalk.benchmalkServer.clova.service;
 
 import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
+import com.benchmalk.benchmalkServer.clova.dto.ClovaEnable;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaRequest;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaResponse;
 import com.benchmalk.benchmalkServer.clova.repository.ClovaAnalysisRepository;
@@ -30,13 +31,23 @@ public class ClovaService {
     private final ScoreCalculator scoreCalculator;
     private final AudioAnalyzer audioAnalyzer;
 
-    private final String INVOKE_URL = System.getProperty("CLOVA_URL");
-    private final String secret = System.getProperty("CLOVA_SECRET");
+    private String INVOKE_URL;
+    private String secret;
     private WebClient webClient;
 
 
     @PostConstruct
     public void init() {
+        if (System.getProperty("CLOVA_URL") != null) {
+            INVOKE_URL = System.getProperty("CLOVA_URL");
+        } else {
+            INVOKE_URL = System.getenv("CLOVA_URL");
+        }
+        if (System.getProperty("CLOVA_SECRET") != null) {
+            secret = System.getProperty("CLOVA_SECRET");
+        } else {
+            secret = System.getenv("CLOVA_SECRET");
+        }
         this.webClient = WebClient.builder()
                 .baseUrl(INVOKE_URL)
                 .defaultHeaders(httpheaders -> {
@@ -50,7 +61,7 @@ public class ClovaService {
             MultipartBodyBuilder builder = new MultipartBodyBuilder();
             File file = new File(filePath);
             builder.part("media", new FileSystemResource(file));
-            builder.part("params", ClovaRequest.builder().language("enko").completion("sync").build());
+            builder.part("params", ClovaRequest.builder().language("enko").completion("sync").diarization(new ClovaEnable(false)).build());
             Mono<ClovaResponse> monoResponse = webClient.post()
                     .uri("/recognizer/upload")
                     .contentType(MediaType.MULTIPART_FORM_DATA)
