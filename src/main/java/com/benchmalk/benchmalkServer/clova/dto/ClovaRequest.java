@@ -14,12 +14,8 @@ public class ClovaRequest {
     private String language;
     private String completion;
     private String callback;
-    private Boolean wordAlignment;
-    private Boolean fullText;
-    private Boolean resultToObs;
     private Boolean noiseFiltering;
     private Array boostings;
-    private Boolean useDomainBoostings;
-    private String forbiddens;
-    private String format;
+    private ClovaEnable diarization;
+
 }
