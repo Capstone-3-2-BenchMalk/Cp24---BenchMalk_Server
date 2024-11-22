@@ -43,6 +43,15 @@ public class PracticeController {
         return ResponseEntity.ok(new PracticeResponse(practice));
     }
 
+    @PostMapping(value = "/test", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<PracticeResponse> createTestPractice(@Valid @RequestPart(value = "json") PracticeRequest practiceRequest, @RequestPart MultipartFile file
+            , @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        Practice practice = practiceService.createTest(practiceRequest.getName(),
+                practiceRequest.getMemo(), Long.parseLong(practiceRequest.getProjectid()), userDetails.getUsername(), file);
+
+        return ResponseEntity.ok(new PracticeResponse(practice));
+    }
+
     @DeleteMapping("/{practiceid}")
     public ResponseEntity<String> deletePractice(@PathVariable("practiceid") Long practiceid) {
         return ResponseEntity.ok("Practice Id = " + practiceService.delete(practiceid).toString() + " deletion success");

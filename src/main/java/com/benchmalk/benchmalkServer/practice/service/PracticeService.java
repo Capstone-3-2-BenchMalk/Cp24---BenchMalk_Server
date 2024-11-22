@@ -35,6 +35,24 @@ public class PracticeService {
         String filePath = fileManager.savePractice(file);
         Practice practice = new Practice(name, memo, project);
         clovaService.callClova(filePath).subscribe(m -> setPracticeAnalysis(practice.getId(), m, filePath));
+        practice.setDuration(audioAnalyzer.getDuration(filePath));
+        return practiceRepository.save(practice);
+    }
+
+    public Practice createTest(String name, String memo, Long projectid, String userid, MultipartFile file) {
+        Project project = projectService.getProject(projectid);
+        if (!project.getUser().getUserid().equals(userid)) {
+            throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
+        }
+        String filePath = fileManager.savePractice(file);
+        Practice practice = new Practice(name, memo, project);
+        practice.setDuration(audioAnalyzer.getDuration(filePath));
+        ClovaAnalysis analysis = new ClovaAnalysis();
+        analysis.setConfidence(0.6);
+        analysis.setRest(10);
+        analysis.setWpm(120);
+        analysis.setPitch(140);
+        practice.setClovaAnalysis(analysis);
         return practiceRepository.save(practice);
     }
 
@@ -85,7 +103,6 @@ public class PracticeService {
             practice.setStatus(PracticeStatus.FAILED);
         }
         practice.setStatus(PracticeStatus.ANALYZED);
-        practice.setDuration(audioAnalyzer.getDuration(filePath));
         practiceRepository.save(practice);
         fileManager.deleteFile(filePath);
     }
