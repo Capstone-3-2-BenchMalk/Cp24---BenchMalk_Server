@@ -4,6 +4,7 @@ import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
 import com.benchmalk.benchmalkServer.clova.domain.ClovaSentence;
 import com.benchmalk.benchmalkServer.clova.domain.ClovaWord;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class ScoreCalculator {
+    private final AudioAnalyzer audioAnalyzer;
 
     public Integer calculateSentenceWPM(ClovaSentence sentence) {
         int wordCount = sentence.getClovaWords().size();
@@ -59,4 +61,30 @@ public class ScoreCalculator {
         }
         return longRestCount;
     }
+
+    public Integer calculateEnergy(String filePath) {
+        List<Float> pitches = audioAnalyzer.analyzePitch(filePath);
+        List<Float> volumes = audioAnalyzer.analyzeVolume(filePath);
+        SummaryStatistics pStats = new SummaryStatistics();
+        SummaryStatistics vStats = new SummaryStatistics();
+        pitches.forEach(p -> {
+            if (p != 0) {
+                pStats.addValue(p);
+            }
+        });
+        volumes.forEach(o -> {
+            if (o != 0) {
+                vStats.addValue(o);
+            }
+        });
+        double pSigma = pStats.getStandardDeviation();
+        double pMean = pStats.getMean();
+        double vSigma = vStats.getStandardDeviation();
+        double vMean = vStats.getMean();
+        System.out.println("Pitch:" + pMean + " " + pSigma);
+        System.out.println("Volume:" + vMean + " " + vSigma);
+        int result = 0;
+        return result;
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.benchmalk.benchmalkServer.util;
 
 import be.tarsos.dsp.AudioDispatcher;
+import be.tarsos.dsp.AudioEvent;
+import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
 import be.tarsos.dsp.pitch.PitchDetectionHandler;
 import be.tarsos.dsp.pitch.PitchProcessor;
@@ -22,8 +24,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AudioAnalyzer {
     // Increase buffer size and add overlap
-    int bufferSize = 4096;
-    int overlap = 1024;
+    int sampleBufferRatio = 5;
+    int overlapRatio = 10;
 
     public List<Float> analyzePitch(String filePath) {
 
@@ -35,6 +37,9 @@ public class AudioAnalyzer {
 
             int sampleRate = (int) inputStream.getFormat().getSampleRate();
 
+            int bufferSize = sampleRate / sampleBufferRatio;
+            int overlap = sampleRate / overlapRatio;
+
             System.out.println(inputStream.getFormat().toString());
 
             dispatcher = AudioDispatcherFactory.fromPipe(filePath, sampleRate, bufferSize, overlap);
@@ -43,7 +48,10 @@ public class AudioAnalyzer {
 
             PitchDetectionHandler pitchHandler = (pitchDetectionResult, audioEvent) -> {
                 float pitchInHz = pitchDetectionResult.getPitch();
-//                System.out.println(audioEvent.getTimeStamp() + ": Detected pitch: " + pitchInHz + " Hz");
+                if (pitchInHz == -1) {
+                    pitchInHz = 0;
+                }
+                System.out.println(audioEvent.getTimeStamp() + ": Detected pitch: " + pitchInHz + " Hz");
                 result.add(pitchInHz);
             };
 
@@ -76,10 +84,62 @@ public class AudioAnalyzer {
         File file = new File(filePath);
         try {
             AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
-            int microseconds = (int) fileFormat.properties().get("mp3.length.bytes");
-            int frameSize = (int) fileFormat.properties().get("mp3.framesize.bytes");
-            float frameRate = (float) fileFormat.properties().get("mp3.framerate.fps");
-            return (long) (microseconds / (frameSize * frameRate));
+            long microseconds = (long) fileFormat.properties().get("duration");
+            return (long) (microseconds / 1000000);
+        } catch (UnsupportedAudioFileException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Float> analyzeVolume(String filePath) {
+        AudioInputStream inputStream = null;
+        try {
+            double referenceRMS = 1.0;
+            double referenceSPL = 94.0;
+
+            inputStream = AudioSystem.getAudioInputStream(new File(filePath));
+
+            int sampleRate = (int) inputStream.getFormat().getSampleRate();
+
+            int bufferSize = sampleRate / sampleBufferRatio;
+            int overlap = sampleRate / overlapRatio;
+
+            AudioDispatcher dispatcher = AudioDispatcherFactory.fromPipe(filePath, sampleRate, bufferSize, overlap);
+
+            List<Float> volumes = new ArrayList<>();
+
+            dispatcher.addAudioProcessor(new AudioProcessor() {
+                @Override
+                public boolean process(AudioEvent audioEvent) {
+                    float[] buffer = audioEvent.getFloatBuffer();
+                    double rms = computeRMS(buffer);
+                    double decibels = 20 * Math.log10(rms / referenceRMS) + referenceSPL;
+                    if (Double.isNaN(decibels)) {
+                        decibels = 0.0;
+                    }
+                    volumes.add((float) decibels);
+                    System.out.println(audioEvent.getTimeStamp() + ": Detected Volume: " + decibels + " dB");
+                    return true;
+                }
+
+                @Override
+                public void processingFinished() {
+                    System.out.println("Volume  analysis finished");
+                }
+
+                private double computeRMS(float[] buffer) {
+                    double sum = 0;
+                    for (float sample : buffer) {
+                        sum += sample;
+                    }
+                    return Math.sqrt(sum / buffer.length);
+                }
+            });
+            dispatcher.run();
+
+            return volumes;
         } catch (UnsupportedAudioFileException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
