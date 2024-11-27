@@ -12,6 +12,7 @@ import com.benchmalk.benchmalkServer.util.ClovaParser;
 import com.benchmalk.benchmalkServer.util.ScoreCalculator;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
@@ -83,15 +84,21 @@ public class ClovaService {
         analysis.setRest(scoreCalculator.calculateAnalysisRest(analysis));
         analysis.getSentences().forEach(s ->
                 s.setWpm(scoreCalculator.calculateSentenceWPM(s)));
-        analysis.setPitch(getAveragePitch(filePath));
+        List<Float> pitches = audioAnalyzer.analyzePitch(filePath);
+        analysis.setPitch(getPitchMean(pitches));
         clovaAnalysisRepository.save(analysis);
         return analysis;
     }
 
-    public Integer getAveragePitch(String filePath) {
-        List<Float> pitches = audioAnalyzer.analyzePitch(filePath);
-        Double avg = pitches.stream().mapToDouble(Float::doubleValue).average().orElse(0);
-        return avg.intValue();
+    public Integer getPitchMean(List<Float> pitches) {
+        SummaryStatistics stats = new SummaryStatistics();
+        pitches.forEach(p -> {
+            if (p != -1) {
+                stats.addValue(p);
+            }
+        });
+        double avg = stats.getMean();
+        return (int) avg;
     }
 
 //    public void callback() {
