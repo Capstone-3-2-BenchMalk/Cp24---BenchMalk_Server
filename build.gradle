@@ -53,7 +53,7 @@ dependencies {
     implementation 'be.tarsos.dsp:jvm:2.5'
     implementation 'com.github.umjammer:mp3spi:1.9.17'
     implementation 'com.github.umjammer:vavi-sound:1.0.19'
-    implementation 'com.github.umjammer.vavi-commons:vavi-commons:1.1.9'
+    implementation 'com.github.umjammer.vavi-commons:vavi-commons:1.1.14'
     implementation 'org.apache.commons:commons-math3:3.6.1'
 
 }

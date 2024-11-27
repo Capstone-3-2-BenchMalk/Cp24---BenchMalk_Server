@@ -40,9 +40,9 @@ public class ModelService {
             String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, type, user, filepath);
             modelRepository.save(model);
-            clovaService.callClova(filepath).subscribe(m -> setModelAnalysis(model.getId(), m));
+            clovaService.callClova(filepath).subscribe(m -> setModelAnalysis(model.getId(), m, filepath));
             model.setDuration(audioAnalyzer.getDuration(filepath));
-            return modelRepository.save(model);
+            return model;
         }
         if (type == ModelType.PROVIDED) {
             if (modelRepository.existsByNameAndModelType(name, type)) {
@@ -51,9 +51,8 @@ public class ModelService {
             String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, type, filepath);
             modelRepository.save(model);
-            clovaService.callClova(filepath).subscribe(m -> setModelAnalysis(model.getId(), m));
-            model.setDuration(audioAnalyzer.getDuration(filepath));
-            return modelRepository.save(model);
+            clovaService.callClova(filepath).subscribe(m -> setModelAnalysis(model.getId(), m, filepath));
+            return model;
         }
         throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
     }
@@ -84,9 +83,10 @@ public class ModelService {
         return models;
     }
 
-    public void setModelAnalysis(Long modelid, ClovaResponse clovaResponse) {
+    public void setModelAnalysis(Long modelid, ClovaResponse clovaResponse, String filepath) {
         Model model = getModel(modelid);
-        ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, model.getFilepath());
+        model.setDuration(audioAnalyzer.getDuration(filepath));
+        ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filepath);
         model.setClovaAnalysis(analysis);
         modelRepository.save(model);
     }

@@ -38,8 +38,7 @@ public class PracticeService {
         Practice practice = new Practice(name, memo, project);
         practiceRepository.save(practice);
         clovaService.callClova(filePath).subscribe(m -> setPracticeAnalysis(practice.getId(), m, filePath));
-        practice.setDuration(audioAnalyzer.getDuration(filePath));
-        return practiceRepository.save(practice);
+        return practice;
     }
 
     public Practice createTest(String name, String memo, Long projectid, String userid, MultipartFile file) {
@@ -101,6 +100,7 @@ public class PracticeService {
     public void setPracticeAnalysis(Long practiceid, ClovaResponse clovaResponse, String filePath) {
         Practice practice = getPractice(practiceid);
         try {
+            practice.setDuration(audioAnalyzer.getDuration(filePath));
             ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filePath);
             practice.setClovaAnalysis(analysis);
         } catch (Exception e) {
