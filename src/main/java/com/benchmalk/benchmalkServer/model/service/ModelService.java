@@ -39,6 +39,7 @@ public class ModelService {
             }
             String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, type, user, filepath);
+            modelRepository.save(model);
             clovaService.callClova(filepath).subscribe(m -> setModelAnalysis(model.getId(), m));
             model.setDuration(audioAnalyzer.getDuration(filepath));
             return modelRepository.save(model);
@@ -49,6 +50,7 @@ public class ModelService {
             }
             String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, type, filepath);
+            modelRepository.save(model);
             clovaService.callClova(filepath).subscribe(m -> setModelAnalysis(model.getId(), m));
             model.setDuration(audioAnalyzer.getDuration(filepath));
             return modelRepository.save(model);

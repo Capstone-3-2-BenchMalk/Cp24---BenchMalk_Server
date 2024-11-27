@@ -18,7 +18,4 @@ public class ClovaResponse {
     private List<ClovaResponseSegments> segments;
     private String text;
     private Double confidence;
-//    private Array speakers;
-//    private Array events;
-//    private Array eventTypes;
 }

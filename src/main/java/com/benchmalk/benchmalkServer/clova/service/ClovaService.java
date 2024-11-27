@@ -1,6 +1,7 @@
 package com.benchmalk.benchmalkServer.clova.service;
 
 import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
+import com.benchmalk.benchmalkServer.clova.dto.ClovaEnable;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaRequest;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaResponse;
 import com.benchmalk.benchmalkServer.clova.repository.ClovaAnalysisRepository;
@@ -11,6 +12,7 @@ import com.benchmalk.benchmalkServer.util.ClovaParser;
 import com.benchmalk.benchmalkServer.util.ScoreCalculator;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
@@ -30,13 +32,23 @@ public class ClovaService {
     private final ScoreCalculator scoreCalculator;
     private final AudioAnalyzer audioAnalyzer;
 
-    private final String INVOKE_URL = System.getProperty("CLOVA_URL");
-    private final String secret = System.getProperty("CLOVA_SECRET");
+    private String INVOKE_URL;
+    private String secret;
     private WebClient webClient;
 
 
     @PostConstruct
     public void init() {
+        if (System.getProperty("CLOVA_URL") != null) {
+            INVOKE_URL = System.getProperty("CLOVA_URL");
+        } else {
+            INVOKE_URL = System.getenv("CLOVA_URL");
+        }
+        if (System.getProperty("CLOVA_SECRET") != null) {
+            secret = System.getProperty("CLOVA_SECRET");
+        } else {
+            secret = System.getenv("CLOVA_SECRET");
+        }
         this.webClient = WebClient.builder()
                 .baseUrl(INVOKE_URL)
                 .defaultHeaders(httpheaders -> {
@@ -50,7 +62,7 @@ public class ClovaService {
             MultipartBodyBuilder builder = new MultipartBodyBuilder();
             File file = new File(filePath);
             builder.part("media", new FileSystemResource(file));
-            builder.part("params", ClovaRequest.builder().language("enko").completion("sync").build());
+            builder.part("params", ClovaRequest.builder().language("enko").completion("sync").diarization(new ClovaEnable(false)).build());
             Mono<ClovaResponse> monoResponse = webClient.post()
                     .uri("/recognizer/upload")
                     .contentType(MediaType.MULTIPART_FORM_DATA)
@@ -72,15 +84,21 @@ public class ClovaService {
         analysis.setRest(scoreCalculator.calculateAnalysisRest(analysis));
         analysis.getSentences().forEach(s ->
                 s.setWpm(scoreCalculator.calculateSentenceWPM(s)));
-        analysis.setPitch(getAveragePitch(filePath));
+        List<Float> pitches = audioAnalyzer.analyzePitch(filePath);
+        analysis.setPitch(getPitchMean(pitches));
         clovaAnalysisRepository.save(analysis);
         return analysis;
     }
 
-    public Integer getAveragePitch(String filePath) {
-        List<Float> pitches = audioAnalyzer.analyzePitch(filePath);
-        Double avg = pitches.stream().mapToDouble(Float::doubleValue).average().orElse(0);
-        return avg.intValue();
+    public Integer getPitchMean(List<Float> pitches) {
+        SummaryStatistics stats = new SummaryStatistics();
+        pitches.forEach(p -> {
+            if (p != -1) {
+                stats.addValue(p);
+            }
+        });
+        double avg = stats.getMean();
+        return (int) avg;
     }
 
 //    public void callback() {

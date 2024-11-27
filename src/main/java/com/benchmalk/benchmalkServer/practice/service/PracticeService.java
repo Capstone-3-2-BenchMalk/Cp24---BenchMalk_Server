@@ -36,6 +36,7 @@ public class PracticeService {
         }
         String filePath = fileManager.savePractice(file);
         Practice practice = new Practice(name, memo, project);
+        practiceRepository.save(practice);
         clovaService.callClova(filePath).subscribe(m -> setPracticeAnalysis(practice.getId(), m, filePath));
         practice.setDuration(audioAnalyzer.getDuration(filePath));
         return practiceRepository.save(practice);
