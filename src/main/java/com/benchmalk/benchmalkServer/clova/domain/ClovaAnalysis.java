@@ -21,6 +21,8 @@ public class ClovaAnalysis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Float Energy;
+
     private Double Confidence;
 
     private Integer wpm;

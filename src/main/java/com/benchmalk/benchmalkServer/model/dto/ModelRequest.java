@@ -13,4 +13,5 @@ public class ModelRequest {
     private String name;
     @NotNull
     private ModelType type;
+    private String description;
 }

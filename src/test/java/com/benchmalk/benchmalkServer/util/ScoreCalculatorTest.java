@@ -2,12 +2,17 @@ package com.benchmalk.benchmalkServer.util;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 class ScoreCalculatorTest {
-    private final ScoreCalculator calculator = new ScoreCalculator(new AudioAnalyzer());
+    private final ScoreCalculator calculator = new ScoreCalculator();
+    private final AudioAnalyzer analyzer = new AudioAnalyzer();
 
     @Test
     void test() {
-        System.out.println(calculator.calculateEnergy("src/test/resources/220.mp3"));
+        List<Float> pitches = analyzer.analyzePitch("src/test/resources/220.mp3");
+        List<Float> volumes = analyzer.analyzeVolume("src/test/resources/220.mp3");
+        System.out.println(calculator.analyzeEnergy(pitches, volumes));
     }
 
 }

@@ -33,6 +33,8 @@ public class Model {
     @NotBlank
     private String name;
 
+    private String description;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private ModelType modelType;
@@ -51,18 +53,24 @@ public class Model {
     @OneToOne(cascade = CascadeType.REMOVE)
     private ClovaAnalysis clovaAnalysis;
 
-    public Model(String name, ModelType modelType, String filepath) {
+    public Model(String name, String description, ModelType modelType, String filepath) {
         if (modelType != ModelType.PROVIDED) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+        if (description.isBlank()) {
+            this.description = "설명 없음";
         }
         this.name = name;
         this.modelType = modelType;
         this.filepath = filepath;
     }
 
-    public Model(String name, ModelType modelType, User user, String filepath) {
+    public Model(String name, String description, ModelType modelType, User user, String filepath) {
         if (modelType != ModelType.CREATED) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+        if (description.isBlank()) {
+            this.description = "설명 없음";
         }
         this.name = name;
         this.modelType = modelType;

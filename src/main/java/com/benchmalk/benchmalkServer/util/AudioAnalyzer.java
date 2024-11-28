@@ -51,7 +51,7 @@ public class AudioAnalyzer {
                 if (pitchInHz == -1) {
                     pitchInHz = 0;
                 }
-                System.out.println(audioEvent.getTimeStamp() + ": Detected pitch: " + pitchInHz + " Hz");
+//                System.out.println(audioEvent.getTimeStamp() + ": Detected pitch: " + pitchInHz + " Hz");
                 result.add(pitchInHz);
             };
 
@@ -120,7 +120,7 @@ public class AudioAnalyzer {
                         decibels = 0.0;
                     }
                     volumes.add((float) decibels);
-                    System.out.println(audioEvent.getTimeStamp() + ": Detected Volume: " + decibels + " dB");
+//                    System.out.println(audioEvent.getTimeStamp() + ": Detected Volume: " + decibels + " dB");
                     return true;
                 }
 

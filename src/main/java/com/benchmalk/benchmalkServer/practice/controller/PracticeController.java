@@ -1,5 +1,6 @@
 package com.benchmalk.benchmalkServer.practice.controller;
 
+import com.benchmalk.benchmalkServer.clova.service.ClovaService;
 import com.benchmalk.benchmalkServer.practice.domain.Practice;
 import com.benchmalk.benchmalkServer.practice.dto.PracticeModifyRequest;
 import com.benchmalk.benchmalkServer.practice.dto.PracticeRequest;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +35,7 @@ import java.util.List;
 @RequestMapping("/api/v1/practices")
 public class PracticeController {
     private final PracticeService practiceService;
+    private final ClovaService clovaService;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<PracticeResponse> createPractice(@Valid @RequestPart(value = "json") PracticeRequest practiceRequest, @RequestPart MultipartFile file
@@ -59,18 +62,25 @@ public class PracticeController {
 
     @GetMapping("/{practiceid}")
     public ResponseEntity<PracticeResponse> getPractice(@PathVariable("practiceid") Long practiceid) {
-        return ResponseEntity.ok(new PracticeResponse(practiceService.getPractice(practiceid)));
+        Practice practice = practiceService.getPractice(practiceid);
+        Map<String, Float> achievement = clovaService.calculateAchievement(practice.getClovaAnalysis(), practice.getProject().getModel().getClovaAnalysis());
+        return ResponseEntity.ok(new PracticeResponse(practice, achievement));
     }
 
     @GetMapping
     public ResponseEntity<List<PracticeResponse>> getPractices(@RequestParam(required = false) Long projectid
             , @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(practiceService.getPractices(userDetails.getUsername(), projectid).stream()
-                .map(p -> new PracticeResponse(p)).toList());
+                .map(p -> {
+                    Map<String, Float> achievement = clovaService.calculateAchievement(p.getClovaAnalysis(), p.getProject().getModel().getClovaAnalysis());
+                    return new PracticeResponse(p, achievement);
+                }).toList());
     }
 
     @PatchMapping
     public ResponseEntity<PracticeResponse> modifyPractice(@Valid @RequestBody PracticeModifyRequest request, @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(new PracticeResponse(practiceService.modify(userDetails.getUsername(), request.getPracticeid(), request.getName(), request.getMemo())));
+        Practice practice = practiceService.modify(userDetails.getUsername(), request.getPracticeid(), request.getName(), request.getMemo());
+        Map<String, Float> achievement = clovaService.calculateAchievement(practice.getClovaAnalysis(), practice.getProject().getModel().getClovaAnalysis());
+        return ResponseEntity.ok(new PracticeResponse(practice, achievement));
     }
 }
