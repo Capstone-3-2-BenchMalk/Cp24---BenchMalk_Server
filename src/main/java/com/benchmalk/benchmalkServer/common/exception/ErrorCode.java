@@ -29,6 +29,7 @@ public enum ErrorCode {
     PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "프로젝트를 찾을 수 없습니다."),
     PRACTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "연습기록을 찾을 수 없습니다."),
     ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "분석결과를 찾을 수 없습니다."),
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다."),
 
     /*
      * 405 METHOD_NOT_ALLOWED: 허용되지 않은 Request Method 호출
