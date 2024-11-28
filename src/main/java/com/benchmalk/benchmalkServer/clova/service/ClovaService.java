@@ -22,7 +22,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -99,6 +101,22 @@ public class ClovaService {
         });
         double avg = stats.getMean();
         return (int) avg;
+    }
+
+    public Map<String, Float> calculateAchievement(ClovaAnalysis target, ClovaAnalysis criteria) {
+        if (target == null || criteria == null) {
+            return Map.of("pitch", -1F, "wpm", -1F, "rest", -1F, "confidence", -1F);
+        }
+        Map<String, Float> achievements = new HashMap<>();
+        float pitchAchievement = (float) target.getPitch() * 100 / criteria.getPitch();
+        float wpmAchievement = (float) target.getWpm() * 100 / criteria.getWpm();
+        float restAchievement = (float) target.getRest() * 100 / criteria.getRest();
+        float confidenceAchievement = (float) (target.getConfidence() * 100 / criteria.getConfidence());
+        achievements.put("pitch", pitchAchievement);
+        achievements.put("wpm", wpmAchievement);
+        achievements.put("rest", restAchievement);
+        achievements.put("confidence", confidenceAchievement);
+        return achievements;
     }
 
 //    public void callback() {
