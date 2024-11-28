@@ -13,10 +13,13 @@ public class AnalysisResponse {
     private Integer pitch;
     private Integer rest;
 
+    private Float energy;
+
     public AnalysisResponse(ClovaAnalysis clovaAnalysis) {
         this.Confidence = clovaAnalysis.getConfidence();
         this.wpm = clovaAnalysis.getWpm();
         this.pitch = clovaAnalysis.getPitch();
         this.rest = clovaAnalysis.getRest();
+        this.energy = clovaAnalysis.getEnergy();
     }
 }

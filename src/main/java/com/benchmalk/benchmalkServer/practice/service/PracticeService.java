@@ -54,6 +54,7 @@ public class PracticeService {
         analysis.setRest(10);
         analysis.setWpm(120);
         analysis.setPitch(140);
+        analysis.setEnergy(3.2F);
         practice.setClovaAnalysis(analysis);
         clovaAnalysisRepository.save(analysis);
         return practiceRepository.save(practice);

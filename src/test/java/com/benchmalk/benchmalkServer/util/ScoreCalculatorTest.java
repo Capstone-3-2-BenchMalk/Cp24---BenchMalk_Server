@@ -7,7 +7,7 @@ class ScoreCalculatorTest {
 
     @Test
     void test() {
-        System.out.println(calculator.calculateEnergy("src/test/resources/220.mp3"));
+        System.out.println(calculator.analyzeEnergy("src/test/resources/220.mp3"));
     }
 
 }

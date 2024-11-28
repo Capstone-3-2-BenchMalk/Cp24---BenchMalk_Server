@@ -88,6 +88,7 @@ public class ClovaService {
                 s.setWpm(scoreCalculator.calculateSentenceWPM(s)));
         List<Float> pitches = audioAnalyzer.analyzePitch(filePath);
         analysis.setPitch(getPitchMean(pitches));
+        analysis.setEnergy(scoreCalculator.analyzeEnergy(filePath));
         clovaAnalysisRepository.save(analysis);
         return analysis;
     }
@@ -105,19 +106,22 @@ public class ClovaService {
 
     public Map<String, Float> calculateAchievement(ClovaAnalysis target, ClovaAnalysis criteria) {
         if (target == null || criteria == null) {
-            return Map.of("pitch", -1F, "wpm", -1F, "rest", -1F, "confidence", -1F);
+            return Map.of("pitch", -1F, "wpm", -1F, "rest", -1F, "confidence", -1F, "energy", -1F);
         }
         Map<String, Float> achievements = new HashMap<>();
         float pitchAchievement = (float) target.getPitch() * 100 / criteria.getPitch();
         float wpmAchievement = (float) target.getWpm() * 100 / criteria.getWpm();
         float restAchievement = (float) target.getRest() * 100 / criteria.getRest();
         float confidenceAchievement = (float) (target.getConfidence() * 100 / criteria.getConfidence());
+        float energyAchievement = target.getEnergy() * 100 / criteria.getEnergy();
         achievements.put("pitch", pitchAchievement);
         achievements.put("wpm", wpmAchievement);
         achievements.put("rest", restAchievement);
         achievements.put("confidence", confidenceAchievement);
+        achievements.put("energy", energyAchievement);
         return achievements;
     }
+
 
 //    public void callback() {
 //        try {

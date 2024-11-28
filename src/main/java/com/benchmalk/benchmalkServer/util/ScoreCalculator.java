@@ -62,7 +62,7 @@ public class ScoreCalculator {
         return longRestCount;
     }
 
-    public Integer calculateEnergy(String filePath) {
+    public Float analyzeEnergy(String filePath) {
         List<Float> pitches = audioAnalyzer.analyzePitch(filePath);
         List<Float> volumes = audioAnalyzer.analyzeVolume(filePath);
         SummaryStatistics pStats = new SummaryStatistics();
@@ -81,10 +81,17 @@ public class ScoreCalculator {
         double pMean = pStats.getMean();
         double vSigma = vStats.getStandardDeviation();
         double vMean = vStats.getMean();
-        System.out.println("Pitch:" + pMean + " " + pSigma);
-        System.out.println("Volume:" + vMean + " " + vSigma);
+
         int result = 0;
-        return result;
+        for (int i = 0; i < pitches.size(); i++) {
+            if (pitches.get(i) == 0 || volumes.get(i) == 0) {
+                continue;
+            }
+            if (pitches.get(i) > pMean + pSigma && volumes.get(i) > vMean + vSigma) {
+                result += 1;
+            }
+        }
+        return result * 100 / (float) pStats.getN();
     }
 
 }
