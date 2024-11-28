@@ -71,6 +71,9 @@ public class ModelService {
     public Resource getModelFIle(Long modelid) {
         String filePath = getModel(modelid).getFilepath();
         File file = new File(filePath);
+        if (!file.exists()) {
+            throw new CustomException(ErrorCode.FILE_NOT_FOUND);
+        }
         return new FileSystemResource(file);
     }
 
