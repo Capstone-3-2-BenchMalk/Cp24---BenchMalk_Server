@@ -12,7 +12,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class ScoreCalculator {
-    private final AudioAnalyzer audioAnalyzer;
 
     public Integer calculateSentenceWPM(ClovaSentence sentence) {
         int wordCount = sentence.getClovaWords().size();
@@ -62,9 +61,7 @@ public class ScoreCalculator {
         return longRestCount;
     }
 
-    public Float analyzeEnergy(String filePath) {
-        List<Float> pitches = audioAnalyzer.analyzePitch(filePath);
-        List<Float> volumes = audioAnalyzer.analyzeVolume(filePath);
+    public Float analyzeEnergy(List<Float> pitches, List<Float> volumes) {
         SummaryStatistics pStats = new SummaryStatistics();
         SummaryStatistics vStats = new SummaryStatistics();
         pitches.forEach(p -> {
