@@ -31,14 +31,14 @@ public class ModelService {
     private final ClovaService clovaService;
     private final AudioAnalyzer audioAnalyzer;
 
-    public Model create(String userid, String name, ModelType type, MultipartFile file) {
+    public Model create(String userid, String name, String description, ModelType type, MultipartFile file) {
         if (type == ModelType.CREATED) {
             User user = userService.getUserByUserId(userid);
             if (modelRepository.existsByNameAndUser(name, user)) {
                 throw new CustomException(ErrorCode.MODEL_CONFLICT);
             }
             String filepath = fileManager.saveModel(file, type);
-            Model model = new Model(name, type, user, filepath);
+            Model model = new Model(name, description, type, user, filepath);
             modelRepository.save(model);
             clovaService.callClova(filepath).subscribe(m -> setModelAnalysis(model.getId(), m, filepath));
             model.setDuration(audioAnalyzer.getDuration(filepath));
@@ -49,7 +49,7 @@ public class ModelService {
                 throw new CustomException(ErrorCode.MODEL_CONFLICT);
             }
             String filepath = fileManager.saveModel(file, type);
-            Model model = new Model(name, type, filepath);
+            Model model = new Model(name, description, type, filepath);
             modelRepository.save(model);
             clovaService.callClova(filepath).subscribe(m -> setModelAnalysis(model.getId(), m, filepath));
             return model;
