@@ -44,7 +44,7 @@ public class Project {
     @NotNull
     private User user;
 
-    @ManyToOne
+    @ManyToOne(cascade = C)
     private Model model;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
