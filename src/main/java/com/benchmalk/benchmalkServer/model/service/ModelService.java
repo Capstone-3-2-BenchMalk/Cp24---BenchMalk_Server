@@ -8,6 +8,8 @@ import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.model.domain.Model;
 import com.benchmalk.benchmalkServer.model.domain.ModelType;
 import com.benchmalk.benchmalkServer.model.repository.ModelRepository;
+import com.benchmalk.benchmalkServer.project.domain.Project;
+import com.benchmalk.benchmalkServer.project.repository.ProjectRepository;
 import com.benchmalk.benchmalkServer.user.domain.User;
 import com.benchmalk.benchmalkServer.user.service.UserService;
 import com.benchmalk.benchmalkServer.util.AudioAnalyzer;
@@ -30,6 +32,7 @@ public class ModelService {
     private final FileManager fileManager;
     private final ClovaService clovaService;
     private final AudioAnalyzer audioAnalyzer;
+    private final ProjectRepository projectRepository;
 
     public Model create(String userid, String name, String description, ModelType type, MultipartFile file) {
         if (type == ModelType.CREATED) {
@@ -58,6 +61,8 @@ public class ModelService {
     }
 
     public Long delete(Long modelid) {
+        List<Project> projects = projectRepository.findProjectsByModelId(modelid);
+        projects.forEach(p -> p.setModel(null));
         fileManager.deleteFile(getModel(modelid).getFilepath());
         modelRepository.deleteById(modelid);
         return modelid;
