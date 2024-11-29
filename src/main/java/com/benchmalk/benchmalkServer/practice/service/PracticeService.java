@@ -89,10 +89,10 @@ public class PracticeService {
         if (!practice.getProject().getUser().getUserid().equals(userid)) {
             throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
         }
-        if (!name.isBlank()) {
+        if (name != null) {
             practice.setName(name);
         }
-        if (!memo.isBlank()) {
+        if (memo != null) {
             practice.setMemo(memo);
         }
         return practiceRepository.save(practice);

@@ -85,7 +85,7 @@ public class ModelService {
     public List<Model> getModels(String userid) {
         List<Model> models = new ArrayList<>();
         models.addAll(modelRepository.findByModelType(ModelType.PROVIDED));
-        if (!userid.isBlank()) {
+        if (userid != null) {
             models.addAll(modelRepository.findByUser(userService.getUserByUserId(userid)));
         }
         return models;

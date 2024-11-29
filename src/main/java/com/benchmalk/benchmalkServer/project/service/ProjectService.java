@@ -50,7 +50,7 @@ public class ProjectService {
         if (!project.getUser().getUserid().equals(userid)) {
             throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
         }
-        if (!name.isBlank()) {
+        if (name != null) {
             project.setName(name);
         }
         if (min_time != null) {
