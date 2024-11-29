@@ -84,7 +84,7 @@ public class ScoreCalculator {
             if (pitches.get(i) == 0 || volumes.get(i) == 0) {
                 continue;
             }
-            if (pitches.get(i) > pMean + pSigma && volumes.get(i) > vMean + vSigma) {
+            if (pitches.get(i) > pMean + pSigma && volumes.get(i) > vMean + (vSigma / 2)) {
                 result += 1;
             }
         }
