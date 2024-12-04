@@ -14,6 +14,7 @@ public class AnalysisResponse {
     private Integer rest;
 
     private Float energy;
+    private Float restPerMinute;
 
     public AnalysisResponse(ClovaAnalysis clovaAnalysis) {
         this.Confidence = clovaAnalysis.getConfidence();
@@ -21,5 +22,6 @@ public class AnalysisResponse {
         this.pitch = clovaAnalysis.getPitch();
         this.rest = clovaAnalysis.getRest();
         this.energy = clovaAnalysis.getEnergy();
+        this.restPerMinute = clovaAnalysis.getRestPerMinute();
     }
 }

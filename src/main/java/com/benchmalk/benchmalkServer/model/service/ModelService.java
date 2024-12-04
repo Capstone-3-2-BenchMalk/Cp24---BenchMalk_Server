@@ -90,6 +90,7 @@ public class ModelService {
         Model model = getModel(modelid);
         model.setDuration(audioAnalyzer.getDuration(filepath));
         ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filepath);
+        analysis.setRestPerMinute((float) analysis.getRest() * 60 / model.getDuration());
         model.setClovaAnalysis(analysis);
         modelRepository.save(model);
     }

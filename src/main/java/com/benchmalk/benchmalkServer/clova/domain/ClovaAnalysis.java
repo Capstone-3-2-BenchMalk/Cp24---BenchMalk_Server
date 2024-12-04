@@ -28,6 +28,7 @@ public class ClovaAnalysis {
     private Integer wpm;
     private Integer pitch;
     private Integer rest;
+    private Float restPerMinute;
 
     @OneToMany(mappedBy = "clovaAnalysis", cascade = CascadeType.ALL)
     private List<ClovaSentence> sentences;
