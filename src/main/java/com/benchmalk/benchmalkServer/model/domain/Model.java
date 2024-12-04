@@ -57,7 +57,7 @@ public class Model {
         if (modelType != ModelType.PROVIDED) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
-        if (description.isBlank()) {
+        if (description == null) {
             this.description = "설명 없음";
         }
         this.name = name;
@@ -69,7 +69,7 @@ public class Model {
         if (modelType != ModelType.CREATED) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
-        if (description.isBlank()) {
+        if (description == null) {
             this.description = "설명 없음";
         }
         this.name = name;
