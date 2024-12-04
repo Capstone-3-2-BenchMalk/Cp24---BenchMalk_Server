@@ -96,8 +96,8 @@ public class AudioAnalyzer {
     public List<Float> analyzeVolume(String filePath) {
         AudioInputStream inputStream = null;
         try {
-            double referenceRMS = 1.0;
-            double referenceSPL = 94.0;
+            double referenceRMS = 0.00002;
+            double referenceSPL = 0;
 
             inputStream = AudioSystem.getAudioInputStream(new File(filePath));
 
@@ -132,7 +132,7 @@ public class AudioAnalyzer {
                 private double computeRMS(float[] buffer) {
                     double sum = 0;
                     for (float sample : buffer) {
-                        sum += sample;
+                        sum += sample * sample;
                     }
                     return Math.sqrt(sum / buffer.length);
                 }
