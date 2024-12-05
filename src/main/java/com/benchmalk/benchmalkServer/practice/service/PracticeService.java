@@ -103,8 +103,8 @@ public class PracticeService {
         try {
             practice.setDuration(audioAnalyzer.getDuration(filePath));
             ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filePath);
-            practice.setClovaAnalysis(analysis);
             analysis.setRestPerMinute((float) analysis.getRest() * 60 / practice.getDuration());
+            practice.setClovaAnalysis(analysis);
         } catch (Exception e) {
             practice.setStatus(PracticeStatus.FAILED);
         }
