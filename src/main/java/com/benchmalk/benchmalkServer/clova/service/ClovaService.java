@@ -80,10 +80,12 @@ public class ClovaService {
         }
     }
 
-    public ClovaAnalysis createAnalysis(ClovaResponse clovaResponse, String filePath) {
+    public ClovaAnalysis createAnalysis(ClovaResponse clovaResponse, String filePath, Long duration) {
         ClovaAnalysis analysis = clovaParser.parse(clovaResponse);
         analysis.setWpm(scoreCalculator.calculateAnalysisWPM(analysis));
-        analysis.setRest(scoreCalculator.calculateAnalysisRest(analysis));
+        Integer rest = scoreCalculator.calculateAnalysisRest(analysis);
+        analysis.setRest(rest);
+        analysis.setRestPerMinute((float) rest * 60 / duration);
         analysis.getSentences().forEach(s ->
                 s.setWpm(scoreCalculator.calculateSentenceWPM(s)));
         List<Float> pitches = audioAnalyzer.analyzePitch(filePath);

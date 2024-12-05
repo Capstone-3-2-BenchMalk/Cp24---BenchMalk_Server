@@ -2,6 +2,7 @@ package com.benchmalk.benchmalkServer.model.service;
 
 import com.benchmalk.benchmalkServer.clova.domain.ClovaAnalysis;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaResponse;
+import com.benchmalk.benchmalkServer.clova.repository.ClovaAnalysisRepository;
 import com.benchmalk.benchmalkServer.clova.service.ClovaService;
 import com.benchmalk.benchmalkServer.common.exception.CustomException;
 import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
@@ -33,6 +34,7 @@ public class ModelService {
     private final ClovaService clovaService;
     private final AudioAnalyzer audioAnalyzer;
     private final ProjectRepository projectRepository;
+    private final ClovaAnalysisRepository clovaAnalysisRepository;
 
     public Model create(String userid, String name, String description, ModelType type, MultipartFile file) {
         if (type == ModelType.CREATED) {
@@ -93,8 +95,9 @@ public class ModelService {
 
     public void setModelAnalysis(Long modelid, ClovaResponse clovaResponse, String filepath) {
         Model model = getModel(modelid);
-        model.setDuration(audioAnalyzer.getDuration(filepath));
-        ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filepath);
+        Long duration = audioAnalyzer.getDuration(filepath);
+        model.setDuration(duration);
+        ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filepath, duration);
         analysis.setRestPerMinute((float) analysis.getRest() * 60 / model.getDuration());
         model.setClovaAnalysis(analysis);
         modelRepository.save(model);
