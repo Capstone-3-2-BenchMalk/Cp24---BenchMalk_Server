@@ -85,7 +85,7 @@ public class ModelService {
     public List<Model> getModels(String userid) {
         List<Model> models = new ArrayList<>();
         models.addAll(modelRepository.findByModelType(ModelType.PROVIDED));
-        if (!userid.isBlank()) {
+        if (userid != null) {
             models.addAll(modelRepository.findByUser(userService.getUserByUserId(userid)));
         }
         return models;
@@ -95,6 +95,7 @@ public class ModelService {
         Model model = getModel(modelid);
         model.setDuration(audioAnalyzer.getDuration(filepath));
         ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filepath);
+        analysis.setRestPerMinute((float) analysis.getRest() * 60 / model.getDuration());
         model.setClovaAnalysis(analysis);
         modelRepository.save(model);
     }

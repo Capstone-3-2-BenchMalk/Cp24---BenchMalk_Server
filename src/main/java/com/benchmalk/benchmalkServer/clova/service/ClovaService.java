@@ -87,7 +87,9 @@ public class ClovaService {
         analysis.getSentences().forEach(s ->
                 s.setWpm(scoreCalculator.calculateSentenceWPM(s)));
         List<Float> pitches = audioAnalyzer.analyzePitch(filePath);
+        analysis.setPitches(pitches.toString());
         List<Float> volumes = audioAnalyzer.analyzeVolume(filePath);
+        analysis.setVolumes(volumes.toString());
         analysis.setPitch(getPitchMean(pitches));
         analysis.setEnergy(scoreCalculator.analyzeEnergy(pitches, volumes));
         clovaAnalysisRepository.save(analysis);
