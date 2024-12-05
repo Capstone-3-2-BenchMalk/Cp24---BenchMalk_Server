@@ -12,7 +12,7 @@ class AudioAnalyzerTest {
     void test() {
         AudioAnalyzer a = new AudioAnalyzer();
         Assertions.assertThatCode(() ->
-                a.analyzePitch("src/test/resources/test.mp3")).doesNotThrowAnyException();
+                System.out.println(a.analyzePitch("src/test/resources/test.mp3").toString())).doesNotThrowAnyException();
     }
 
     @Test
@@ -27,9 +27,8 @@ class AudioAnalyzerTest {
     @Test
     void test3() throws UnsupportedAudioFileException, IOException {
         AudioAnalyzer a = new AudioAnalyzer();
-        Assertions.assertThatCode(() -> {
-            a.analyzeVolume("src/test/resources/220.mp3");
-        }).doesNotThrowAnyException();
+        Assertions.assertThatCode(() ->
+                System.out.println(a.analyzeVolume("src/test/resources/220.mp3").toString())).doesNotThrowAnyException();
     }
 
 }
