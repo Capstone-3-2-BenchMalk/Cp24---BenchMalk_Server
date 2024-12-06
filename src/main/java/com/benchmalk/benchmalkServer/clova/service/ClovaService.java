@@ -112,7 +112,7 @@ public class ClovaService {
 
     public Map<String, Float> calculateAchievement(ClovaAnalysis target, ClovaAnalysis criteria) {
         if (target == null || criteria == null) {
-            return Map.of("pitch", -1F, "wpm", -1F, "rest", -1F, "confidence", -1F, "energy", -1F);
+            return Map.of("pitch", -1F, "wpm", -1F, "rest", -1F, "confidence", -1F, "pitchSD", -1F, "volumeSD", -1F);
         }
         Map<String, Float> achievements = new HashMap<>();
         float pitchAchievement = getAchieve((float) target.getPitch(), (float) criteria.getPitch());
