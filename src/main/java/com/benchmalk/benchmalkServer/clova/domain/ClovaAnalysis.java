@@ -22,14 +22,15 @@ public class ClovaAnalysis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Float Energy;
-
     private Double Confidence;
 
     private Integer wpm;
     private Integer pitch;
     private Integer rest;
     private Float restPerMinute;
+
+    private Float pitchSD;
+    private Float volumeSD;
 
     @Lob
     private String pitches;
