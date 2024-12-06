@@ -13,7 +13,8 @@ public class AnalysisResponse {
     private Integer pitch;
     private Integer rest;
 
-    private Float energy;
+    private Float pitchSD;
+    private Float volumeSD;
     private Float restPerMinute;
 
     private String pitches;
@@ -24,7 +25,8 @@ public class AnalysisResponse {
         this.wpm = clovaAnalysis.getWpm();
         this.pitch = clovaAnalysis.getPitch();
         this.rest = clovaAnalysis.getRest();
-        this.energy = clovaAnalysis.getEnergy();
+        this.pitchSD = clovaAnalysis.getPitchSD();
+        this.volumeSD = clovaAnalysis.getVolumeSD();
         this.restPerMinute = clovaAnalysis.getRestPerMinute();
         this.pitches = clovaAnalysis.getPitches();
         this.volumes = clovaAnalysis.getVolumes();

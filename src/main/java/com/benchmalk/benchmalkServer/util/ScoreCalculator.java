@@ -47,34 +47,14 @@ public class ScoreCalculator {
         return longRestCount;
     }
 
-    public Float analyzeEnergy(List<Float> pitches, List<Float> volumes) {
-        SummaryStatistics pStats = new SummaryStatistics();
-        SummaryStatistics vStats = new SummaryStatistics();
-        pitches.forEach(p -> {
+    public Float analyzeSD(List<Float> data) {
+        SummaryStatistics stats = new SummaryStatistics();
+        data.forEach(p -> {
             if (p != 0) {
-                pStats.addValue(p);
+                stats.addValue(p);
             }
         });
-        volumes.forEach(o -> {
-            if (o != 0) {
-                vStats.addValue(o);
-            }
-        });
-        double pSigma = pStats.getStandardDeviation();
-        double pMean = pStats.getMean();
-        double vSigma = vStats.getStandardDeviation();
-        double vMean = vStats.getMean();
-
-        int result = 0;
-        for (int i = 0; i < pitches.size(); i++) {
-            if (pitches.get(i) == 0 || volumes.get(i) == 0) {
-                continue;
-            }
-            if (pitches.get(i) > pMean + pSigma || volumes.get(i) > vMean + (vSigma / 2)) {
-                result += 1;
-            }
-        }
-        return result * 100 / (float) pStats.getN();
+        return (float) stats.getStandardDeviation();
     }
 
 }

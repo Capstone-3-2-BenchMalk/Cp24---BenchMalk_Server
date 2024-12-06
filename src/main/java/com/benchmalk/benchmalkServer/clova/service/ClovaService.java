@@ -90,10 +90,11 @@ public class ClovaService {
                 s.setWpm(scoreCalculator.calculateSentenceWPM(s)));
         List<Float> pitches = audioAnalyzer.analyzePitch(filePath);
         analysis.setPitches(pitches.toString());
+        analysis.setPitchSD(scoreCalculator.analyzeSD(pitches));
         List<Float> volumes = audioAnalyzer.analyzeVolume(filePath);
         analysis.setVolumes(volumes.toString());
+        analysis.setVolumeSD(scoreCalculator.analyzeSD(volumes));
         analysis.setPitch(getPitchMean(pitches));
-        analysis.setEnergy(scoreCalculator.analyzeEnergy(pitches, volumes));
         clovaAnalysisRepository.save(analysis);
         return analysis;
     }
@@ -114,17 +115,24 @@ public class ClovaService {
             return Map.of("pitch", -1F, "wpm", -1F, "rest", -1F, "confidence", -1F, "energy", -1F);
         }
         Map<String, Float> achievements = new HashMap<>();
-        float pitchAchievement = (float) target.getPitch() * 100 / criteria.getPitch();
-        float wpmAchievement = (float) target.getWpm() * 100 / criteria.getWpm();
-        float restAchievement = (float) target.getRest() * 100 / criteria.getRest();
-        float confidenceAchievement = (float) (target.getConfidence() * 100 / criteria.getConfidence());
-        float energyAchievement = target.getEnergy() * 100 / criteria.getEnergy();
+        float pitchAchievement = getAchieve((float) target.getPitch(), (float) criteria.getPitch());
+        float wpmAchievement = getAchieve((float) target.getWpm(), (float) criteria.getWpm());
+        float restAchievement = getAchieve((float) target.getRest(), (float) criteria.getRest());
+        float confidenceAchievement = getAchieve(target.getConfidence().floatValue(), criteria.getConfidence().floatValue());
+        float pitchSDAchievement = getAchieve(target.getPitchSD(), criteria.getPitchSD());
+        float volumeSDAchievement = getAchieve(target.getVolumeSD(), criteria.getVolumeSD());
         achievements.put("pitch", pitchAchievement);
         achievements.put("wpm", wpmAchievement);
         achievements.put("rest", restAchievement);
         achievements.put("confidence", confidenceAchievement);
-        achievements.put("energy", energyAchievement);
+        achievements.put("pitchSD", pitchSDAchievement);
+        achievements.put("volumeSD", volumeSDAchievement);
         return achievements;
+    }
+
+    private float getAchieve(float target, float criteria) {
+        float result = 100 - (Math.abs(target - criteria) * 100) / criteria;
+        return result;
     }
 
 
