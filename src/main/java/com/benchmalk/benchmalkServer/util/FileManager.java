@@ -31,11 +31,11 @@ public class FileManager {
 
     public String saveModel(MultipartFile file, ModelType modelType) {
         if (modelType == ModelType.PROVIDED) {
-            String savedFileName = "Model_PROVIDED_" + file.getOriginalFilename();
+            String savedFileName = "Model_PROVIDED_" + UUID.randomUUID().toString() + file.getOriginalFilename();
             return saveFile(file, savedFileName);
         }
         if (modelType == ModelType.CREATED) {
-            String savedFileName = "Model_" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            String savedFileName = "Model_CREATED" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
             return saveFile(file, savedFileName);
         }
         throw new CustomException(ErrorCode.BAD_REQUEST);
