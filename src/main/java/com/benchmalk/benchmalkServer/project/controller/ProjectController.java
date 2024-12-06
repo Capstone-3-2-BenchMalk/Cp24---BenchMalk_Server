@@ -56,7 +56,7 @@ public class ProjectController {
     @PatchMapping
     public ResponseEntity<ProjectResponse> modifyProject(@Valid @RequestBody ProjectModifyRequest request, @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(new ProjectResponse(projectService.modify(userDetails.getUsername(), request.getProjectid()
-                , request.getName(), request.getMin_time(), request.getMax_time(), request.getModeilid())));
+                , request.getName(), request.getMin_time(), request.getMax_time(), request.getModelid())));
     }
 
 

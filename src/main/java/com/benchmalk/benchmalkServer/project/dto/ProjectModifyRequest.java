@@ -12,5 +12,5 @@ public class ProjectModifyRequest {
     private String name;
     private Integer min_time;
     private Integer max_time;
-    private Long modeilid;
+    private Long modelid;
 }
