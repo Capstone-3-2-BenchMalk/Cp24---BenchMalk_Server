@@ -39,9 +39,9 @@ public class ModelService {
     public Model create(String userid, String name, String description, ModelType type, MultipartFile file) {
         if (type == ModelType.CREATED) {
             User user = userService.getUserByUserId(userid);
-            if (modelRepository.existsByNameAndUser(name, user)) {
-                throw new CustomException(ErrorCode.MODEL_CONFLICT);
-            }
+//            if (modelRepository.existsByNameAndUser(name, user)) {
+//                throw new CustomException(ErrorCode.MODEL_CONFLICT);
+//            }
             String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, description, type, user, filepath);
             modelRepository.save(model);
@@ -50,9 +50,9 @@ public class ModelService {
             return model;
         }
         if (type == ModelType.PROVIDED) {
-            if (modelRepository.existsByNameAndModelType(name, type)) {
-                throw new CustomException(ErrorCode.MODEL_CONFLICT);
-            }
+//            if (modelRepository.existsByNameAndModelType(name, type)) {
+//                throw new CustomException(ErrorCode.MODEL_CONFLICT);
+//            }
             String filepath = fileManager.saveModel(file, type);
             Model model = new Model(name, description, type, filepath);
             modelRepository.save(model);

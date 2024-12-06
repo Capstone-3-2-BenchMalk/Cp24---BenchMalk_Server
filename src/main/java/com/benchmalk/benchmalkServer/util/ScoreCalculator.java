@@ -30,30 +30,16 @@ public class ScoreCalculator {
     }
 
     public Integer calculateAnalysisRest(ClovaAnalysis analysis) {
-        int restCount = 0;
-        Long restSum = 0L;
-        List<ClovaSentence> sentences = analysis.getSentences();
-        restCount += sentences.size() - 1;
-        for (int i = 0; i < sentences.size(); i++) {
-            if (i < sentences.size() - 1) {
-                restSum += sentences.get(i + 1).getStart() - sentences.get(i).getEnd();
-            }
-            restCount += sentences.get(i).getClovaWords().size() - 1;
-            List<ClovaWord> words = sentences.get(i).getClovaWords();
-            for (int j = 0; j < words.size() - 1; j++) {
-                restSum += words.get(j + 1).getStart() - words.get(j).getEnd();
-            }
-        }
 
-        Long avgRest = restSum / restCount;
+        List<ClovaSentence> sentences = analysis.getSentences();
         int longRestCount = 0;
         for (int i = 0; i < sentences.size() - 1; i++) {
-            if (sentences.get(i + 1).getStart() - sentences.get(i).getEnd() >= avgRest) {
+            if (sentences.get(i + 1).getStart() - sentences.get(i).getEnd() >= 180) {
                 longRestCount++;
             }
             List<ClovaWord> words = sentences.get(i).getClovaWords();
             for (int j = 0; j < words.size() - 1; j++) {
-                if (words.get(j + 1).getStart() - words.get(j).getEnd() >= avgRest) {
+                if (words.get(j + 1).getStart() - words.get(j).getEnd() >= 180) {
                     longRestCount++;
                 }
             }
@@ -84,7 +70,7 @@ public class ScoreCalculator {
             if (pitches.get(i) == 0 || volumes.get(i) == 0) {
                 continue;
             }
-            if (pitches.get(i) > pMean + pSigma && volumes.get(i) > vMean + (vSigma / 2)) {
+            if (pitches.get(i) > pMean + pSigma || volumes.get(i) > vMean + (vSigma / 2)) {
                 result += 1;
             }
         }
