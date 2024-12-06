@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AudioAnalyzer {
     // Increase buffer size and add overlap
-    int sampleBufferRatio = 5;
+    int sampleBufferRatio = 10;
     int overlapRatio = 10;
 
     public List<Float> analyzePitch(String filePath) {
@@ -38,7 +38,7 @@ public class AudioAnalyzer {
             int sampleRate = (int) inputStream.getFormat().getSampleRate();
 
             int bufferSize = sampleRate / sampleBufferRatio;
-            int overlap = sampleRate / overlapRatio;
+            int overlap = 0;
 
             System.out.println(inputStream.getFormat().toString());
 
@@ -104,7 +104,7 @@ public class AudioAnalyzer {
             int sampleRate = (int) inputStream.getFormat().getSampleRate();
 
             int bufferSize = sampleRate / sampleBufferRatio;
-            int overlap = sampleRate / overlapRatio;
+            int overlap = 0;
 
             AudioDispatcher dispatcher = AudioDispatcherFactory.fromPipe(filePath, sampleRate, bufferSize, overlap);
 
