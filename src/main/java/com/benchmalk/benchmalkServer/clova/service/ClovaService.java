@@ -5,8 +5,6 @@ import com.benchmalk.benchmalkServer.clova.dto.ClovaEnable;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaRequest;
 import com.benchmalk.benchmalkServer.clova.dto.ClovaResponse;
 import com.benchmalk.benchmalkServer.clova.repository.ClovaAnalysisRepository;
-import com.benchmalk.benchmalkServer.common.exception.CustomException;
-import com.benchmalk.benchmalkServer.common.exception.ErrorCode;
 import com.benchmalk.benchmalkServer.util.AudioAnalyzer;
 import com.benchmalk.benchmalkServer.util.ClovaParser;
 import com.benchmalk.benchmalkServer.util.ScoreCalculator;
@@ -59,25 +57,19 @@ public class ClovaService {
                 .build();
     }
 
-    public Mono<ClovaResponse> callClova(String filePath) {
-        try {
-            MultipartBodyBuilder builder = new MultipartBodyBuilder();
-            File file = new File(filePath);
-            builder.part("media", new FileSystemResource(file));
-            builder.part("params", ClovaRequest.builder().language("enko").completion("sync").diarization(new ClovaEnable(false)).build());
-            Mono<ClovaResponse> monoResponse = webClient.post()
-                    .uri("/recognizer/upload")
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .bodyValue(builder.build())
-                    .retrieve()
-                    .bodyToMono(ClovaResponse.class);
-            return monoResponse;
-        } catch (WebClientResponseException e) {
-            System.out.println(e.getResponseBodyAsString());
-            System.out.println(e.getStatusCode() + e.getStatusText());
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+    public Mono<ClovaResponse> callClova(String filePath) throws WebClientResponseException {
+        MultipartBodyBuilder builder = new MultipartBodyBuilder();
+        File file = new File(filePath);
+        builder.part("media", new FileSystemResource(file));
+        builder.part("params", ClovaRequest.builder().language("enko").completion("sync").diarization(new ClovaEnable(false)).build());
+        Mono<ClovaResponse> monoResponse = webClient.post()
+                .uri("/recognizer/upload")
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(builder.build())
+                .retrieve()
+                .bodyToMono(ClovaResponse.class);
+        return monoResponse;
     }
 
     public ClovaAnalysis createAnalysis(ClovaResponse clovaResponse, String filePath, Long duration) {
