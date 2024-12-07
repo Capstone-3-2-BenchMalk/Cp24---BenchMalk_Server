@@ -50,7 +50,7 @@ public class ScoreCalculator {
     public Float analyzeSD(List<Float> data) {
         SummaryStatistics stats = new SummaryStatistics();
         data.forEach(p -> {
-            if (p != 0) {
+            if (p != 0 && !p.isInfinite() && !p.isNaN()) {
                 stats.addValue(p);
             }
         });

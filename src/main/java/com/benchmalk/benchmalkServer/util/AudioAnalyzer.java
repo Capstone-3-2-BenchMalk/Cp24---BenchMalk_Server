@@ -47,9 +47,9 @@ public class AudioAnalyzer {
             ArrayList<Float> result = new ArrayList<>();
 
             PitchDetectionHandler pitchHandler = (pitchDetectionResult, audioEvent) -> {
-                float pitchInHz = pitchDetectionResult.getPitch();
-                if (pitchInHz == -1) {
-                    pitchInHz = 0;
+                Float pitchInHz = pitchDetectionResult.getPitch();
+                if (pitchInHz == -1 || pitchInHz.isInfinite() || pitchInHz.isNaN()) {
+                    pitchInHz = 0F;
                 }
 //                System.out.println(audioEvent.getTimeStamp() + ": Detected pitch: " + pitchInHz + " Hz");
                 result.add(pitchInHz);
@@ -115,11 +115,11 @@ public class AudioAnalyzer {
                 public boolean process(AudioEvent audioEvent) {
                     float[] buffer = audioEvent.getFloatBuffer();
                     double rms = computeRMS(buffer);
-                    double decibels = 20 * Math.log10(rms / referenceRMS) + referenceSPL;
-                    if (Double.isNaN(decibels)) {
-                        decibels = 0.0;
+                    Double decibels = 20 * Math.log10(rms / referenceRMS) + referenceSPL;
+                    if (decibels.isNaN() || decibels.isInfinite()) {
+                        decibels = 0D;
                     }
-                    volumes.add((float) decibels);
+                    volumes.add(decibels.floatValue());
 //                    System.out.println(audioEvent.getTimeStamp() + ": Detected Volume: " + decibels + " dB");
                     return true;
                 }
