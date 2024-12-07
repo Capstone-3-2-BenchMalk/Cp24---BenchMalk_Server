@@ -16,6 +16,7 @@ import com.benchmalk.benchmalkServer.util.FileManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 
@@ -37,7 +38,15 @@ public class PracticeService {
         String filePath = fileManager.savePractice(file);
         Practice practice = new Practice(name, memo, project);
         practiceRepository.save(practice);
-        clovaService.callClova(filePath).subscribe(m -> setPracticeAnalysis(practice.getId(), m, filePath));
+        try {
+            clovaService.callClova(filePath).subscribe(m -> setPracticeAnalysis(practice.getId(), m, filePath));
+        } catch (WebClientResponseException e) {
+            System.out.println(e.getResponseBodyAsString());
+            System.out.println(e.getStatusCode() + e.getStatusText());
+            practice.setStatus(PracticeStatus.FAILED);
+            practiceRepository.save(practice);
+            throw new CustomException(ErrorCode.API_CALL_ERROR);
+        }
         return practice;
     }
 
@@ -104,10 +113,11 @@ public class PracticeService {
             practice.setDuration(duration);
             ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filePath, duration);
             practice.setClovaAnalysis(analysis);
+            practice.setStatus(PracticeStatus.ANALYZED);
         } catch (Exception e) {
             practice.setStatus(PracticeStatus.FAILED);
+            throw new CustomException(ErrorCode.API_CALL_ERROR);
         }
-        practice.setStatus(PracticeStatus.ANALYZED);
         practiceRepository.save(practice);
         fileManager.deleteFile(filePath);
     }
