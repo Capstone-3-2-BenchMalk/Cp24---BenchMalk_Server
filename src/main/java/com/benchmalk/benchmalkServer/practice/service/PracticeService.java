@@ -115,8 +115,13 @@ public class PracticeService {
             practice.setClovaAnalysis(analysis);
             practice.setStatus(PracticeStatus.ANALYZED);
         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
             practice.setStatus(PracticeStatus.FAILED);
-            throw new CustomException(ErrorCode.API_CALL_ERROR);
+            practiceRepository.save(practice);
+            fileManager.deleteFile(filePath);
+            throw new CustomException(ErrorCode.ANALYSIS_ERROR);
         }
         practiceRepository.save(practice);
         fileManager.deleteFile(filePath);

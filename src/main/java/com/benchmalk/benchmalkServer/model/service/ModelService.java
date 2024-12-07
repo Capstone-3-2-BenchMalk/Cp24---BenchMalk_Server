@@ -95,11 +95,18 @@ public class ModelService {
 
     public void setModelAnalysis(Long modelid, ClovaResponse clovaResponse, String filepath) {
         Model model = getModel(modelid);
-        Long duration = audioAnalyzer.getDuration(filepath);
-        model.setDuration(duration);
-        ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filepath, duration);
-        analysis.setRestPerMinute((float) analysis.getRest() * 60 / model.getDuration());
-        model.setClovaAnalysis(analysis);
+        try {
+            Long duration = audioAnalyzer.getDuration(filepath);
+            model.setDuration(duration);
+            ClovaAnalysis analysis = clovaService.createAnalysis(clovaResponse, filepath, duration);
+            analysis.setRestPerMinute((float) analysis.getRest() * 60 / model.getDuration());
+            model.setClovaAnalysis(analysis);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+            throw new CustomException(ErrorCode.ANALYSIS_ERROR);
+        }
         modelRepository.save(model);
     }
 }
