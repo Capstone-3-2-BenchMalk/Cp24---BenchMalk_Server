@@ -14,6 +14,7 @@ public class PracticeAchievement {
     private float confidence;
     private float pitchSD;
     private float volumeSD;
+    private float accent;
 
     public PracticeAchievement(Map<String, Float> data) {
         this.pitch = data.get("pitch");
@@ -22,5 +23,6 @@ public class PracticeAchievement {
         this.confidence = data.get("confidence");
         this.pitchSD = data.get("pitchSD");
         this.volumeSD = data.get("volumeSD");
+        this.accent = data.get("accent");
     }
 }

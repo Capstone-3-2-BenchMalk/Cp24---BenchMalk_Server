@@ -28,6 +28,7 @@ public class ClovaAnalysis {
     private Integer pitch;
     private Integer rest;
     private Float restPerMinute;
+    private Float accent;
 
     private Float pitchSD;
     private Float volumeSD;

@@ -12,7 +12,10 @@ class ScoreCalculatorTest {
     @Test
     void test() {
         Assertions.assertThatCode(() ->
-                System.out.println(calculator.analyzeSD(analyzer.analyzePitch("src/test/resources/byung.mp3")))).doesNotThrowAnyException();
+                        System.out.println(calculator.calculateAccent(
+                                analyzer.analyzePitch("src/test/resources/byung.mp3"),
+                                analyzer.analyzeVolume("src/test/resources/byung.mp3"))))
+                .doesNotThrowAnyException();
     }
 
 
