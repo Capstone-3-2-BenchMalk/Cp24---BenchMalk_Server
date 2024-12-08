@@ -109,7 +109,7 @@ public class ClovaService {
         Map<String, Float> achievements = new HashMap<>();
         float pitchAchievement = getAchieve((float) target.getPitch(), (float) criteria.getPitch());
         float wpmAchievement = getAchieve((float) target.getWpm(), (float) criteria.getWpm());
-        float restAchievement = getAchieve((float) target.getRest(), (float) criteria.getRest());
+        float restAchievement = getAchieve(target.getRestPerMinute(), criteria.getRestPerMinute());
         float confidenceAchievement = getAchieve(target.getConfidence().floatValue(), criteria.getConfidence().floatValue());
         float pitchSDAchievement = getAchieve(target.getPitchSD(), criteria.getPitchSD());
         float volumeSDAchievement = getAchieve(target.getVolumeSD(), criteria.getVolumeSD());
