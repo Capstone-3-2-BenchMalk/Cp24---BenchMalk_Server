@@ -48,24 +48,94 @@ public class ScoreCalculator {
         return longRestCount;
     }
 
-    public Float analyzeSD(List<Float> data) {
+    public Float calculateSD(List<Float> data) {
         SummaryStatistics stats = new SummaryStatistics();
-        List<Float> filterData = new ArrayList<Float>();
-        data.forEach(p -> {
-            if (p != 0 && !p.isInfinite() && !p.isNaN()) {
-                filterData.add(p);
-            }
-        });
+        List<Float> filterData = filterData(data);
         filterData.forEach(stats::addValue);
         double sigma = stats.getStandardDeviation();
         double mean = stats.getMean();
         stats.clear();
-        data.forEach(p -> {
+        filterData.forEach(p -> {
             if (p < mean + 2 * sigma) {
                 stats.addValue(p);
             }
         });
         return (float) stats.getStandardDeviation();
+    }
+
+    public Integer calculateAccent(List<Float> pitches, List<Float> volumes) {
+        SummaryStatistics vStats = new SummaryStatistics();
+        SummaryStatistics pStats = new SummaryStatistics();
+        List<Float> filterPitches = filterData(pitches);
+        List<Float> filterVolumes = filterData(volumes);
+        filterVolumes.forEach(vStats::addValue);
+        filterPitches.forEach(pStats::addValue);
+        double vSigma = vStats.getStandardDeviation();
+        double vMean = vStats.getMean();
+        double pSigma = pStats.getStandardDeviation();
+        double pMean = pStats.getMean();
+        int result = 0;
+        int size = Math.min(filterPitches.size(), filterVolumes.size());
+        boolean flag = true;
+        for (int i = 0; i < size; i++) {
+            Float p = pitches.get(i);
+            Float v = volumes.get(i);
+            if (filter(p) || filter(v)) {
+                continue;
+            }
+            if (p > pMean + 2 * pSigma) {
+                continue;
+            }
+            if (v > vMean + 2 * vSigma) {
+                continue;
+            }
+            if (flag) {
+                if (p > 1.3 * pMean || v > 1.3 * vMean) {
+                    result += 1;
+                    flag = false;
+                }
+            }
+            if (!flag) {
+                if (p <= 1.3 * pMean && v <= 1.3 * vMean) {
+                    flag = true;
+                }
+            }
+        }
+        return result;
+    }
+
+    private List<Float> filterData(List<Float> data) {
+        List<Float> filterData = removeTrashData(data);
+        filterData = removeOutliers(filterData);
+        return filterData;
+    }
+
+    private boolean filter(Float d) {
+        return d == 0 || d.isInfinite() || d.isNaN();
+    }
+
+    private List<Float> removeTrashData(List<Float> data) {
+        List<Float> filteredData = new ArrayList<>();
+        data.forEach(d -> {
+            if (!filter(d)) {
+                filteredData.add(d);
+            }
+        });
+        return filteredData;
+    }
+
+    private List<Float> removeOutliers(List<Float> data) {
+        List<Float> filteredData = new ArrayList<>();
+        SummaryStatistics stats = new SummaryStatistics();
+        data.forEach(stats::addValue);
+        double mean = stats.getMean();
+        double sigma = stats.getStandardDeviation();
+        data.forEach(d -> {
+            if (d < mean + 2 * sigma) {
+                filteredData.add(d);
+            }
+        });
+        return filteredData;
     }
 
 }

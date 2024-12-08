@@ -82,11 +82,12 @@ public class ClovaService {
                 s.setWpm(scoreCalculator.calculateSentenceWPM(s)));
         List<Float> pitches = audioAnalyzer.analyzePitch(filePath);
         analysis.setPitches(pitches.toString());
-        analysis.setPitchSD(scoreCalculator.analyzeSD(pitches));
+        analysis.setPitchSD(scoreCalculator.calculateSD(pitches));
         List<Float> volumes = audioAnalyzer.analyzeVolume(filePath);
         analysis.setVolumes(volumes.toString());
-        analysis.setVolumeSD(scoreCalculator.analyzeSD(volumes));
+        analysis.setVolumeSD(scoreCalculator.calculateSD(volumes));
         analysis.setPitch(getPitchMean(pitches));
+        analysis.setAccent((float) scoreCalculator.calculateAccent(pitches, volumes) * 60 / duration);
         clovaAnalysisRepository.save(analysis);
         return analysis;
     }
@@ -104,7 +105,8 @@ public class ClovaService {
 
     public Map<String, Float> calculateAchievement(ClovaAnalysis target, ClovaAnalysis criteria) {
         if (target == null || criteria == null) {
-            return Map.of("pitch", -1F, "wpm", -1F, "rest", -1F, "confidence", -1F, "pitchSD", -1F, "volumeSD", -1F);
+            return Map.of("pitch", -1F, "wpm", -1F, "rest", -1F, "confidence", -1F,
+                    "pitchSD", -1F, "volumeSD", -1F, "accent", -1F);
         }
         Map<String, Float> achievements = new HashMap<>();
         float pitchAchievement = getAchieve((float) target.getPitch(), (float) criteria.getPitch());
@@ -113,17 +115,19 @@ public class ClovaService {
         float confidenceAchievement = getAchieve(target.getConfidence().floatValue(), criteria.getConfidence().floatValue());
         float pitchSDAchievement = getAchieve(target.getPitchSD(), criteria.getPitchSD());
         float volumeSDAchievement = getAchieve(target.getVolumeSD(), criteria.getVolumeSD());
+        float accentAchievement = getAchieve(target.getAccent(), criteria.getAccent());
         achievements.put("pitch", pitchAchievement);
         achievements.put("wpm", wpmAchievement);
         achievements.put("rest", restAchievement);
         achievements.put("confidence", confidenceAchievement);
         achievements.put("pitchSD", pitchSDAchievement);
         achievements.put("volumeSD", volumeSDAchievement);
+        achievements.put("accent", accentAchievement);
         return achievements;
     }
 
     private float getAchieve(float target, float criteria) {
-        float result = 100 - (Math.abs(target - criteria) * 100) / criteria;
+        float result = (target / criteria) * 100;
         return result;
     }
 

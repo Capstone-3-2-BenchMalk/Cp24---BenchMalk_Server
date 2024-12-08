@@ -16,6 +16,7 @@ public class AnalysisResponse {
     private Float pitchSD;
     private Float volumeSD;
     private Float restPerMinute;
+    private Float accent;
 
     private String pitches;
     private String volumes;
@@ -30,5 +31,6 @@ public class AnalysisResponse {
         this.restPerMinute = clovaAnalysis.getRestPerMinute();
         this.pitches = clovaAnalysis.getPitches();
         this.volumes = clovaAnalysis.getVolumes();
+        this.accent = clovaAnalysis.getAccent();
     }
 }
