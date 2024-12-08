@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -49,8 +50,18 @@ public class ScoreCalculator {
 
     public Float analyzeSD(List<Float> data) {
         SummaryStatistics stats = new SummaryStatistics();
+        List<Float> filterData = new ArrayList<Float>();
         data.forEach(p -> {
             if (p != 0 && !p.isInfinite() && !p.isNaN()) {
+                filterData.add(p);
+            }
+        });
+        filterData.forEach(stats::addValue);
+        double sigma = stats.getStandardDeviation();
+        double mean = stats.getMean();
+        stats.clear();
+        data.forEach(p -> {
+            if (p < mean + 2 * sigma) {
                 stats.addValue(p);
             }
         });
