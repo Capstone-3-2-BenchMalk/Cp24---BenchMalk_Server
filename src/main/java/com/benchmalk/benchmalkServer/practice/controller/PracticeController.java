@@ -72,7 +72,10 @@ public class PracticeController {
             , @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(practiceService.getPractices(userDetails.getUsername(), projectid).stream()
                 .map(p -> {
-                    Map<String, Float> achievement = clovaService.calculateAchievement(p.getClovaAnalysis(), p.getProject().getModel().getClovaAnalysis());
+                    Map<String, Float> achievement = null;
+                    if (p.getProject().getModel() != null) {
+                        achievement = clovaService.calculateAchievement(p.getClovaAnalysis(), p.getProject().getModel().getClovaAnalysis());
+                    }
                     return new PracticeResponse(p, achievement);
                 }).toList());
     }
