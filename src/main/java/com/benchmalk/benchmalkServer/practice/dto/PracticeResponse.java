@@ -35,8 +35,10 @@ public class PracticeResponse {
         this.duration = practice.getDuration();
         if (practice.getClovaAnalysis() != null) {
             this.analysis = new AnalysisResponse(practice.getClovaAnalysis());
+            if (achievements != null) {
+                this.achievements = new PracticeAchievement(achievements);
+            }
         }
-        this.achievements = new PracticeAchievement(achievements);
     }
 
     public PracticeResponse(Practice practice) {
