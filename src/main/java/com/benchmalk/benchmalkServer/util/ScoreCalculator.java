@@ -90,13 +90,13 @@ public class ScoreCalculator {
                 continue;
             }
             if (flag) {
-                if (p > 1.3 * pMean || v > 1.3 * vMean) {
+                if (p > 1.25 * pMean || v > 1.1 * vMean) {
                     result += 1;
                     flag = false;
                 }
             }
             if (!flag) {
-                if (p <= 1.3 * pMean && v <= 1.3 * vMean) {
+                if (p <= 1.25 * pMean && v <= 1.1 * vMean) {
                     flag = true;
                 }
             }
