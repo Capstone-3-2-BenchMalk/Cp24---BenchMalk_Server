@@ -131,7 +131,7 @@ public class ScoreCalculator {
         double mean = stats.getMean();
         double sigma = stats.getStandardDeviation();
         data.forEach(d -> {
-            if (d < mean + 2 * sigma) {
+            if (d < mean + 2 * sigma && d > mean - 2 * sigma) {
                 filteredData.add(d);
             }
         });
