@@ -138,4 +138,20 @@ public class ScoreCalculator {
         return filteredData;
     }
 
+    public Integer getMean(List<Float> data) {
+        List<Float> filterData = removeTrashData(data);
+        SummaryStatistics stats = new SummaryStatistics();
+        data.forEach(stats::addValue);
+        double sigma = stats.getStandardDeviation();
+        double mean = stats.getMean();
+        stats.clear();
+        filterData.forEach(p -> {
+            if (p < mean + 2 * sigma) {
+                stats.addValue(p);
+            }
+        });
+        double avg = stats.getMean();
+        return (int) avg;
+    }
+
 }

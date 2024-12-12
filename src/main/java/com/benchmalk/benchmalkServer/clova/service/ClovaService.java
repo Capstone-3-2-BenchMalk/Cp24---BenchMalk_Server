@@ -10,7 +10,6 @@ import com.benchmalk.benchmalkServer.util.ClovaParser;
 import com.benchmalk.benchmalkServer.util.ScoreCalculator;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
@@ -86,22 +85,12 @@ public class ClovaService {
         List<Float> volumes = audioAnalyzer.analyzeVolume(filePath);
         analysis.setVolumes(volumes.toString());
         analysis.setVolumeSD(scoreCalculator.calculateSD(volumes));
-        analysis.setPitch(getPitchMean(pitches));
+        analysis.setPitch(scoreCalculator.getMean(pitches));
         analysis.setAccent((float) scoreCalculator.calculateAccent(pitches, volumes) * 60 / duration);
         clovaAnalysisRepository.save(analysis);
         return analysis;
     }
 
-    public Integer getPitchMean(List<Float> pitches) {
-        SummaryStatistics stats = new SummaryStatistics();
-        pitches.forEach(p -> {
-            if (p != -1) {
-                stats.addValue(p);
-            }
-        });
-        double avg = stats.getMean();
-        return (int) avg;
-    }
 
     public Map<String, Float> calculateAchievement(ClovaAnalysis target, ClovaAnalysis criteria) {
         if (target == null || criteria == null) {
